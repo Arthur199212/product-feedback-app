@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"product-feedback/router"
 	"syscall"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,14 +24,7 @@ func main() {
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	log.SetOutput(logger.Writer())
 
-	router := gin.Default()
-
-	// just for test
-	router.GET("/", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, map[string]interface{}{
-			"message": "OK",
-		})
-	})
+	router := router.NewRouter()
 
 	svr := &http.Server{
 		Addr:           ":" + *port,
