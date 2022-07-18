@@ -4,16 +4,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddRoutes(rg *gin.RouterGroup) {
-	repo := NewCommentRepository()
-	service := NewCommentService(repo)
-	handler := NewCommentHandler(service)
-
+func (h *CommentHandler) AddRoutes(rg *gin.RouterGroup) {
 	comments := rg.Group("/comments")
 	{
-		comments.GET("/", handler.getAllComments)
-		comments.POST("/", handler.addComment)
-		comments.PUT("/:id", handler.updateComment)
-		comments.DELETE("/:id", handler.deleteComment)
+		comments.GET("/", h.getAllComments)
+		comments.POST("/", h.addComment)
+		comments.PUT("/:id", h.updateComment)
+		comments.DELETE("/:id", h.deleteComment)
 	}
 }

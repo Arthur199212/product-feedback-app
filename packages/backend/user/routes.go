@@ -2,13 +2,9 @@ package users
 
 import "github.com/gin-gonic/gin"
 
-func AddRoutes(rg *gin.RouterGroup) {
-	repo := NewUserRepository()
-	service := NewUserService(repo)
-	handler := NewUserHandler(service)
-
+func (h *UserHandler) AddRoutes(rg *gin.RouterGroup) {
 	users := rg.Group("/users")
 	{
-		users.GET("/:id", handler.getUser)
+		users.GET("/:id", h.getUser)
 	}
 }

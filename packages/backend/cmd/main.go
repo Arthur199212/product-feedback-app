@@ -8,10 +8,13 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"product-feedback/router"
+	"product-feedback/database"
+	"product-feedback/provider"
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
 
@@ -24,7 +27,27 @@ func main() {
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	log.SetOutput(logger.Writer())
 
-	router := router.NewRouter()
+	if err := godotenv.Load(); err != nil {
+		logrus.Fatal("could not get evn vars", err)
+	}
+
+	db, err := database.NewPostgresDB(database.Config{
+		DBName:   os.Getenv("POSTGRES_DB"),
+		Host:     "localhost",
+		Password: os.Getenv("POSTGRES_PASSWORD"),
+		Port:     os.Getenv("POSTGRES_PORT"),
+		SSLMode:  "disable",
+		Username: os.Getenv("POSTGRES_USER"),
+	})
+	if err != nil {
+		logger.Fatal("could not connect to the DB", err)
+	}
+
+	repos := provider.NewRepository(db)
+	services := provider.NewService(repos)
+	handlers := provider.NewHandler(services)
+
+	router := handlers.InitRoutes()
 
 	svr := &http.Server{
 		Addr:           ":" + *port,
@@ -35,7 +58,7 @@ func main() {
 	}
 
 	go func() {
-		logger.Printf("Starting server at http://localhost:%s", *port)
+		logger.Printf("starting server at http://localhost:%s", *port)
 
 		err := svr.ListenAndServe()
 		if err != nil && errors.Is(err, http.ErrServerClosed) {
@@ -47,14 +70,18 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
 	<-quit
-	logger.Println("Shutting down server ...")
+	logger.Println("shutting down server ...")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	if err := svr.Shutdown(ctx); err != nil {
-		logger.Fatal("Server forced to shutdown:", err)
+		logger.Fatal("server forced to shutdown", err)
 	}
 
-	logger.Println("Server exiting")
+	if err := db.Close(); err != nil {
+		logger.Fatal("sould not close connection to the DB", err)
+	}
+
+	logger.Println("server exiting")
 }

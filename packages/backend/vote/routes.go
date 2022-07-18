@@ -4,15 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddRoutes(rg *gin.RouterGroup) {
-	repo := NewVoteRepository()
-	service := NewVoteService(repo)
-	handler := NewVoteHandler(service)
-
+func (h *VoteHandler) AddRoutes(rg *gin.RouterGroup) {
 	votes := rg.Group("/votes")
 	{
-		votes.GET("/", handler.getAllVotes)
-		votes.POST("/", handler.addVote)
-		votes.DELETE("/:id", handler.deleteVote)
+		votes.GET("/", h.getAllVotes)
+		votes.POST("/", h.addVote)
+		votes.DELETE("/:id", h.deleteVote)
 	}
 }

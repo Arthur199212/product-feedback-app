@@ -1,8 +1,11 @@
 package comment
 
+import "database/sql"
+
 type CommentRepository struct {
+	db *sql.DB
 }
 
-func NewCommentRepository() *CommentRepository {
-	return &CommentRepository{}
+func NewCommentRepository(db *sql.DB) *CommentRepository {
+	return &CommentRepository{db}
 }

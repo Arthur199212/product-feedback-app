@@ -4,17 +4,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func AddRoutes(rg *gin.RouterGroup) {
-	repo := NewFeedbackRepository()
-	service := NewFeedbackService(repo)
-	handler := NewFeedbackHandler(service)
-
+func (h *FeedbackHandler) AddRoutes(rg *gin.RouterGroup) {
 	feedback := rg.Group("/feedback")
 	{
-		feedback.GET("/", handler.getAllFeedback)
-		feedback.POST("/", handler.createFeedback)
-		feedback.GET("/:id", handler.getFeedbackById)
-		feedback.PUT("/:id", handler.updateFeedback)
-		feedback.DELETE("/:id", handler.deleteFeedback)
+		feedback.GET("/", h.getAllFeedback)
+		feedback.POST("/", h.createFeedback)
+		feedback.GET("/:id", h.getFeedbackById)
+		feedback.PUT("/:id", h.updateFeedback)
+		feedback.DELETE("/:id", h.deleteFeedback)
 	}
 }
