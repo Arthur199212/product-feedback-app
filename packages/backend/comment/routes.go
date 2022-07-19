@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *CommentHandler) AddRoutes(rg *gin.RouterGroup) {
+func (h *commentHandler) AddRoutes(rg *gin.RouterGroup) {
 	comments := rg.Group("/comments")
 	{
 		comments.GET("/", h.getAllComments)

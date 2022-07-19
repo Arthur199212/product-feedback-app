@@ -6,27 +6,31 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type VoteHandler struct {
-	service *VoteService
+type VoteHandler interface {
+	AddRoutes(r *gin.RouterGroup)
 }
 
-func NewVoteHandler(service *VoteService) *VoteHandler {
-	return &VoteHandler{service}
+type voteHandler struct {
+	service VoteService
 }
 
-func (h *VoteHandler) getAllVotes(c *gin.Context) {
+func NewVoteHandler(service VoteService) VoteHandler {
+	return &voteHandler{service}
+}
+
+func (h *voteHandler) getAllVotes(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "getAllVotes not implemented",
 	})
 }
 
-func (h *VoteHandler) addVote(c *gin.Context) {
+func (h *voteHandler) addVote(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "addVote not implemented",
 	})
 }
 
-func (h *VoteHandler) deleteVote(c *gin.Context) {
+func (h *voteHandler) deleteVote(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "deleteVote not implemented",
 	})

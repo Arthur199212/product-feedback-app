@@ -15,7 +15,7 @@ import (
 
 // todo: use utils.FromJSON ...
 
-func (h *AuthHandler) AddRoutes(r *gin.RouterGroup) {
+func (h *authHandler) AddRoutes(r *gin.RouterGroup) {
 	auth := r.Group("/auth")
 	{
 		auth.GET("/github", h.redirectToGitHubLoginURL)
@@ -31,7 +31,7 @@ const (
 	ghLoginOauthAccessTokenUri = "https://github.com/login/oauth/access_token"
 )
 
-func (h *AuthHandler) redirectToGitHubLoginURL(c *gin.Context) {
+func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
 	// baseUrl, err := url.Parse(c.Request.Host + c.Request.URL.Port())
 	// if err != nil {
 	// 	log.Print(err)
@@ -47,7 +47,7 @@ func (h *AuthHandler) redirectToGitHubLoginURL(c *gin.Context) {
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
-func (h *AuthHandler) loginWithGitHub(c *gin.Context) {
+func (h *authHandler) loginWithGitHub(c *gin.Context) {
 	accessToken, err := h.getGithubAccessToken(c.Query("code"))
 	if err != nil {
 		log.Println(err)
@@ -78,7 +78,7 @@ type githubAccessTokenResponse struct {
 	Scope       string `json:"scope"`
 }
 
-func (h *AuthHandler) getGithubAccessToken(code string) (string, error) {
+func (h *authHandler) getGithubAccessToken(code string) (string, error) {
 	bodyMap := map[string]string{
 		"client_id":     os.Getenv("GITHUB_CLIENT_ID"),
 		"client_secret": os.Getenv("GITHUB_CLIENT_SECRET"),
@@ -118,7 +118,7 @@ type ghUserEmailResponse struct {
 	Verified bool   `json:"verified"`
 }
 
-func (h *AuthHandler) getUserEmailFromGitHub(accessToken string) (string, error) {
+func (h *authHandler) getUserEmailFromGitHub(accessToken string) (string, error) {
 	req, err := http.NewRequest(
 		http.MethodGet,
 		"https://api.github.com/user/emails",

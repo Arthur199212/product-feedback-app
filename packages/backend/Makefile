@@ -20,3 +20,9 @@ migrate-up:
 
 migrate-down:
 	${MIGRATE_CMD} down
+
+lint:
+	gofmt -d .
+
+lint-fix:
+	gofmt -w .

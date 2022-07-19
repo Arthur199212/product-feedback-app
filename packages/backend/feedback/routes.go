@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *FeedbackHandler) AddRoutes(rg *gin.RouterGroup) {
+func (h *feedbackHandler) AddRoutes(rg *gin.RouterGroup) {
 	feedback := rg.Group("/feedback")
 	{
 		feedback.GET("/", h.getAllFeedback)

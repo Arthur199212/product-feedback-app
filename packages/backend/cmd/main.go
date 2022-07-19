@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"product-feedback/database"
 	"product-feedback/provider"
+	"product-feedback/server"
 	"syscall"
 	"time"
 
@@ -47,20 +48,12 @@ func main() {
 	services := provider.NewService(repos)
 	handlers := provider.NewHandler(services)
 
-	router := handlers.InitRoutes()
-
-	svr := &http.Server{
-		Addr:           ":" + *port,
-		Handler:        router,
-		MaxHeaderBytes: 1 << 20, // 1 MB
-		ReadTimeout:    10 * time.Second,
-		WriteTimeout:   10 * time.Second,
-	}
+	svr := server.NewServer(*port, handlers)
 
 	go func() {
 		logger.Printf("starting server at http://localhost:%s", *port)
 
-		err := svr.ListenAndServe()
+		err := svr.Run()
 		if err != nil && errors.Is(err, http.ErrServerClosed) {
 			logger.Println("listen:", err)
 		}

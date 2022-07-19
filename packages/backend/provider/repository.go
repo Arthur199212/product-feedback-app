@@ -9,10 +9,10 @@ import (
 )
 
 type Repository struct {
-	Comment  *comment.CommentRepository
-	Feedback *feedback.FeedbackRepository
-	User     *users.UserRepository
-	Vote     *vote.VoteRepository
+	Comment  comment.CommentRepository
+	Feedback feedback.FeedbackRepository
+	User     users.UserRepository
+	Vote     vote.VoteRepository
 }
 
 func NewRepository(db *sql.DB) *Repository {

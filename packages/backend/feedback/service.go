@@ -1,9 +1,12 @@
 package feedback
 
-type FeedbackService struct {
-	repo *FeedbackRepository
+type FeedbackService interface {
 }
 
-func NewFeedbackService(repo *FeedbackRepository) *FeedbackService {
-	return &FeedbackService{repo}
+type feedbackService struct {
+	repo FeedbackRepository
+}
+
+func NewFeedbackService(repo FeedbackRepository) FeedbackService {
+	return &feedbackService{repo}
 }

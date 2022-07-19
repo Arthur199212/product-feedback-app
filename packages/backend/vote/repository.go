@@ -2,10 +2,13 @@ package vote
 
 import "database/sql"
 
-type VoteRepository struct {
+type VoteRepository interface {
+}
+
+type voteRepository struct {
 	db *sql.DB
 }
 
-func NewVoteRepository(db *sql.DB) *VoteRepository {
-	return &VoteRepository{db}
+func NewVoteRepository(db *sql.DB) *voteRepository {
+	return &voteRepository{db}
 }

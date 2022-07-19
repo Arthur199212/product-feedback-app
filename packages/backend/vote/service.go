@@ -1,9 +1,12 @@
 package vote
 
-type VoteService struct {
-	repo *VoteRepository
+type VoteService interface {
 }
 
-func NewVoteService(repo *VoteRepository) *VoteService {
-	return &VoteService{repo}
+type voteService struct {
+	repo VoteRepository
+}
+
+func NewVoteService(repo VoteRepository) VoteService {
+	return &voteService{repo}
 }

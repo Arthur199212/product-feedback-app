@@ -2,10 +2,13 @@ package feedback
 
 import "database/sql"
 
-type FeedbackRepository struct {
+type FeedbackRepository interface {
+}
+
+type feedbackRepository struct {
 	db *sql.DB
 }
 
-func NewFeedbackRepository(db *sql.DB) *FeedbackRepository {
-	return &FeedbackRepository{db}
+func NewFeedbackRepository(db *sql.DB) *feedbackRepository {
+	return &feedbackRepository{db}
 }

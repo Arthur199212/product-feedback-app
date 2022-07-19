@@ -6,15 +6,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserHandler struct {
-	service *UserService
+type UserHandler interface {
+	AddRoutes(r *gin.RouterGroup)
 }
 
-func NewUserHandler(service *UserService) *UserHandler {
-	return &UserHandler{service}
+type userHandler struct {
+	service UserService
 }
 
-func (h *UserHandler) getUser(c *gin.Context) {
+func NewUserHandler(service UserService) UserHandler {
+	return &userHandler{service}
+}
+
+func (h *userHandler) getUser(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "getUser not implemented",
 	})

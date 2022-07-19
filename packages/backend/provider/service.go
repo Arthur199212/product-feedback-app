@@ -9,19 +9,19 @@ import (
 )
 
 type Service struct {
-	Authorization *auth.AuthService
-	Comment       *comment.CommentService
-	Feedback      *feedback.FeedbackService
-	User          *users.UserService
-	Vote          *vote.VoteService
+	Auth     auth.AuthService
+	Comment  comment.CommentService
+	Feedback feedback.FeedbackService
+	User     users.UserService
+	Vote     vote.VoteService
 }
 
 func NewService(r *Repository) *Service {
 	return &Service{
-		Authorization: auth.NewAuthService(r.User),
-		Comment:       comment.NewCommentService(r.Comment),
-		Feedback:      feedback.NewFeedbackService(r.Feedback),
-		User:          users.NewUserService(r.User),
-		Vote:          vote.NewVoteService(r.Vote),
+		Auth:     auth.NewAuthService(r.User),
+		Comment:  comment.NewCommentService(r.Comment),
+		Feedback: feedback.NewFeedbackService(r.Feedback),
+		User:     users.NewUserService(r.User),
+		Vote:     vote.NewVoteService(r.Vote),
 	}
 }

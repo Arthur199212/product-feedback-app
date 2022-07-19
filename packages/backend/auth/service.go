@@ -2,10 +2,13 @@ package auth
 
 import users "product-feedback/user"
 
-type AuthService struct {
-	userRepo *users.UserRepository
+type AuthService interface {
 }
 
-func NewAuthService(userRepo *users.UserRepository) *AuthService {
-	return &AuthService{userRepo}
+type authService struct {
+	repo users.UserRepository
+}
+
+func NewAuthService(userRepo users.UserRepository) AuthService {
+	return &authService{userRepo}
 }

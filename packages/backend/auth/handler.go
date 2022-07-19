@@ -6,21 +6,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type AuthHandler struct {
-	service *AuthService
+type AuthHandler interface {
+	AddRoutes(r *gin.RouterGroup)
 }
 
-func NewAuthHandler(service *AuthService) *AuthHandler {
-	return &AuthHandler{service}
+type authHandler struct {
+	service AuthService
 }
 
-func (h *AuthHandler) signIn(c *gin.Context) {
+func NewAuthHandler(service AuthService) AuthHandler {
+	return &authHandler{service}
+}
+
+func (h *authHandler) signIn(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "signIn not implemented",
 	})
 }
 
-func (h *AuthHandler) signUp(c *gin.Context) {
+func (h *authHandler) signUp(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "signUp not implemented",
 	})
