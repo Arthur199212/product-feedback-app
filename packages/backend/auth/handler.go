@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +24,8 @@ func NewAuthHandler(service AuthService) AuthHandler {
 
 func (h *authHandler) loginWithGitHub(c *gin.Context) {
 	code := c.Query("code")
-	userData, err := h.service.getUserDataFromGitHub(code)
+
+	userId, err := h.service.loginWithGitHub(code)
 	if err != nil {
 		// fmt.Println(err)
 		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
@@ -32,10 +34,24 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 		return
 	}
 
-	// todo: login user
-	fmt.Println(userData)
+	token, err := h.service.generateRefreshToken(strconv.Itoa(userId))
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
+			"message": "login failed",
+		})
+		return
+	}
 
-	c.Header("refresh-token", userData.Email)
+	c.SetCookie(
+		refreshTokenCookieName,
+		token,
+		int(refreshTokenTTL),
+		"/api/auth/refresh-token",
+		"localhost",
+		true,
+		true,
+	)
 	c.Redirect(http.StatusFound, "http://localhost:8000/")
 }
 
@@ -49,14 +65,29 @@ func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
-func (h *authHandler) signIn(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "signIn not implemented",
-	})
-}
+func (h *authHandler) refreshAccessToken(c *gin.Context) {
+	refreshToken, err := c.Cookie(refreshTokenCookieName)
+	if err != nil {
+		fmt.Println(err) // todo: use loggrus
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
 
-func (h *authHandler) signUp(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "signUp not implemented",
+	userId, err := h.service.verifyRefreshToken(refreshToken)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+
+	token, err := h.service.generateAccessToken(strconv.Itoa(userId))
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"accessToken": token,
 	})
 }

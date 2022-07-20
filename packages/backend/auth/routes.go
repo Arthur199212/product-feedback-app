@@ -9,7 +9,6 @@ func (h *authHandler) AddRoutes(r *gin.RouterGroup) {
 	{
 		auth.GET("/github", h.redirectToGitHubLoginURL)
 		auth.GET("/github/callback", h.loginWithGitHub)
-		auth.POST("/sign-in", h.signIn)
-		auth.POST("/sign-up", h.signUp)
+		auth.POST("/refresh-token", h.refreshAccessToken)
 	}
 }
