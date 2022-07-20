@@ -5,6 +5,7 @@ import (
 	"product-feedback/auth"
 	"product-feedback/comment"
 	"product-feedback/feedback"
+	"product-feedback/middleware"
 	users "product-feedback/user"
 	"product-feedback/vote"
 
@@ -35,6 +36,8 @@ func NewHandler(s *Service) Handler {
 
 func (h *handler) InitRoutes() *gin.Engine {
 	router := gin.New()
+
+	router.Use(middleware.CorsMiddleware)
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "Product Feedback Api")

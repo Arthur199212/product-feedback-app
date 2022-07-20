@@ -1,9 +1,13 @@
 package user
 
-import "github.com/gin-gonic/gin"
+import (
+	"product-feedback/middleware"
+
+	"github.com/gin-gonic/gin"
+)
 
 func (h *userHandler) AddRoutes(rg *gin.RouterGroup) {
-	users := rg.Group("/users")
+	users := rg.Group("/users", middleware.AuthRequired)
 	{
 		users.GET("/:id", h.getUser)
 	}

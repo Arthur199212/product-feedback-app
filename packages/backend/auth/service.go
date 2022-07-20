@@ -24,7 +24,6 @@ type AuthService interface {
 	getUserEmailFromGitHub(accessToken string) <-chan getUserEmailFromGitHubResponse
 	getUserFromGitHub(accessToken string) <-chan getUserFromGitHubResponse
 	loginWithGitHub(code string) (int, error)
-	verifyAccessToken(tokenStr string) (int, error)
 	verifyRefreshToken(tokenStr string) (int, error)
 }
 
@@ -276,23 +275,6 @@ func (s *authService) loginWithGitHub(code string) (int, error) {
 	}
 
 	return s.userService.Create(userToCreate)
-}
-
-func (s *authService) verifyAccessToken(tokenStr string) (int, error) {
-	token, err := jwt.ParseWithClaims(tokenStr, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, errors.New("invalid jwt token signing method")
-		}
-		return []byte(os.Getenv("ACCESS_TOKEN_SECRET")), nil
-	})
-	if err != nil {
-		return 0, err
-	}
-
-	if claims, ok := token.Claims.(*jwt.StandardClaims); ok && token.Valid {
-		return strconv.Atoi(claims.Subject)
-	}
-	return 0, errors.New("token is invalid")
 }
 
 func (s *authService) verifyRefreshToken(tokenStr string) (int, error) {
