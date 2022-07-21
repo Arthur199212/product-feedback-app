@@ -6,7 +6,8 @@ import (
 	"product-feedback/comment"
 	"product-feedback/feedback"
 	"product-feedback/middleware"
-	users "product-feedback/user"
+	"product-feedback/user"
+	"product-feedback/validation"
 	"product-feedback/vote"
 
 	"github.com/gin-gonic/gin"
@@ -20,16 +21,16 @@ type handler struct {
 	Auth     auth.AuthHandler
 	Comment  comment.CommentHandler
 	Feedback feedback.FeedbackHandler
-	User     users.UserHandler
+	User     user.UserHandler
 	Vote     vote.VoteHandler
 }
 
-func NewHandler(s *Service) Handler {
+func NewHandler(s *Service, v *validation.Validation) Handler {
 	return &handler{
 		Auth:     auth.NewAuthHandler(s.Auth),
 		Comment:  comment.NewCommentHandler(s.Comment),
 		Feedback: feedback.NewFeedbackHandler(s.Feedback),
-		User:     users.NewUserHandler(s.User),
+		User:     user.NewUserHandler(s.User),
 		Vote:     vote.NewVoteHandler(s.Vote),
 	}
 }

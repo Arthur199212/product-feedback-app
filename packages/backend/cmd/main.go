@@ -11,6 +11,7 @@ import (
 	"product-feedback/database"
 	"product-feedback/provider"
 	"product-feedback/server"
+	"product-feedback/validation"
 	"syscall"
 	"time"
 
@@ -44,9 +45,11 @@ func main() {
 		logger.Fatal("could not connect to the DB", err)
 	}
 
+	v := validation.NewValidation()
+
 	repos := provider.NewRepository(db)
 	services := provider.NewService(repos)
-	handlers := provider.NewHandler(services)
+	handlers := provider.NewHandler(services, v)
 
 	svr := server.NewServer(*port, handlers)
 
