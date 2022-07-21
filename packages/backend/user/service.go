@@ -15,18 +15,13 @@ func NewUserService(repo UserRepository) UserService {
 }
 
 func (s *userService) Create(user User) (int, error) {
-	// todo: validation in handler
 	return s.repo.Create(user)
 }
 
 func (s *userService) GetByEmail(email string) (User, error) {
-	var user User
-	// todo
-	return user, nil
+	return s.repo.GetByEmail(email)
 }
 
 func (s *userService) GetById(id int) (User, error) {
-	var user User
-	// todo
-	return user, nil
+	return s.repo.GetById(id)
 }
