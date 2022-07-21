@@ -49,7 +49,7 @@ func main() {
 
 	repos := provider.NewRepository(db)
 	services := provider.NewService(repos)
-	handlers := provider.NewHandler(services, v)
+	handlers := provider.NewHandler(logger, v, services)
 
 	svr := server.NewServer(*port, handlers)
 

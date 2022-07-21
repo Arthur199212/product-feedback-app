@@ -13,7 +13,7 @@ CREATE TABLE feedback (
   title TEXT NOT NULL,
   body TEXT NOT NULL,
   category TEXT NOT NULL,
-  stauts TEXT NOT NULL,
+  status TEXT NOT NULL,
   user_id INT NOT NULL,
   created_at TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP(3) NOT NULL,

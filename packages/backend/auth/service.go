@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"product-feedback/user"
@@ -34,19 +33,6 @@ type authService struct {
 func NewAuthService(userService user.UserService) AuthService {
 	return &authService{userService}
 }
-
-const (
-	ghLoginOauthAccessTokenURI = "https://github.com/login/oauth/access_token"
-	ghLoginOauthAuthorizeURI   = "https://github.com/login/oauth/authorize"
-	ghRedirectURI              = "http://localhost:8000/api/auth/github/callback"
-	ghUserEmailsURI            = "https://api.github.com/user/emails"
-	ghUserEmailScope           = "user:email"
-
-	accessTokenTTL         = 30 * time.Minute
-	refreshTokenCookieName = "refresh-token"
-	refreshTokenRoute      = "/api/auth/refresh-token"
-	refreshTokenTTL        = 72 * time.Hour
-)
 
 func (s *authService) generateAccessToken(userId string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
@@ -120,7 +106,6 @@ func (s *authService) getUserDataFromGitHub(
 ) (userDataFromGitHub, error) {
 	accessToken, err := s.getGithubAccessToken(code)
 	if err != nil {
-		log.Println(err) // todo: use loggrus instance
 		return userDataFromGitHub{}, err
 	}
 
@@ -129,11 +114,9 @@ func (s *authService) getUserDataFromGitHub(
 
 	userResp, userEmailResp := <-userReq, <-userEmailReq
 	if userResp.err != nil {
-		log.Println(userResp.err)
 		return userDataFromGitHub{}, userResp.err
 	}
 	if userEmailResp.err != nil {
-		log.Println(userEmailResp.err)
 		return userDataFromGitHub{}, userEmailResp.err
 	}
 
@@ -176,9 +159,6 @@ func (s *authService) getUserFromGitHub(
 				err:  err,
 			}
 		}
-
-		// b, err := ioutil.ReadAll(resp.Body)
-		// fmt.Println(string(b))
 
 		var user userDataFromGitHub
 		err = utils.FromJSON(resp.Body, &user)
@@ -251,13 +231,11 @@ func (s *authService) getUserEmailFromGitHub(
 func (s *authService) loginWithGitHub(code string) (int, error) {
 	userData, err := s.getUserDataFromGitHub(code)
 	if err != nil {
-		fmt.Println(err) // todo: use loggrus instance
 		return 0, err
 	}
 
 	userObj, err := s.userService.GetByEmail(userData.Email)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println(err)
 		return 0, err
 	}
 

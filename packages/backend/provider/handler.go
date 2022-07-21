@@ -11,6 +11,7 @@ import (
 	"product-feedback/vote"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type Handler interface {
@@ -25,11 +26,15 @@ type handler struct {
 	Vote     vote.VoteHandler
 }
 
-func NewHandler(s *Service, v *validation.Validation) Handler {
+func NewHandler(
+	l *logrus.Logger,
+	v *validation.Validation,
+	s *Service,
+) Handler {
 	return &handler{
-		Auth:     auth.NewAuthHandler(s.Auth),
+		Auth:     auth.NewAuthHandler(l, s.Auth),
 		Comment:  comment.NewCommentHandler(s.Comment),
-		Feedback: feedback.NewFeedbackHandler(s.Feedback),
+		Feedback: feedback.NewFeedbackHandler(l, v, s.Feedback),
 		User:     user.NewUserHandler(s.User),
 		Vote:     vote.NewVoteHandler(s.Vote),
 	}

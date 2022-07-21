@@ -1,13 +1,13 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type AuthHandler interface {
@@ -15,11 +15,15 @@ type AuthHandler interface {
 }
 
 type authHandler struct {
+	l       *logrus.Logger
 	service AuthService
 }
 
-func NewAuthHandler(service AuthService) AuthHandler {
-	return &authHandler{service}
+func NewAuthHandler(l *logrus.Logger, service AuthService) AuthHandler {
+	return &authHandler{
+		l:       l,
+		service: service,
+	}
 }
 
 func (h *authHandler) loginWithGitHub(c *gin.Context) {
@@ -27,7 +31,7 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 
 	userId, err := h.service.loginWithGitHub(code)
 	if err != nil {
-		// fmt.Println(err)
+		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
 			"message": "login failed",
 		})
@@ -36,7 +40,7 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 
 	token, err := h.service.generateRefreshToken(strconv.Itoa(userId))
 	if err != nil {
-		fmt.Println(err)
+		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
 			"message": "login failed",
 		})
@@ -68,21 +72,21 @@ func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
 func (h *authHandler) refreshAccessToken(c *gin.Context) {
 	refreshToken, err := c.Cookie(refreshTokenCookieName)
 	if err != nil {
-		fmt.Println(err) // todo: use loggrus
+		h.l.Error(err)
 		c.AbortWithStatus(http.StatusForbidden)
 		return
 	}
 
 	userId, err := h.service.verifyRefreshToken(refreshToken)
 	if err != nil {
-		fmt.Println(err)
+		h.l.Error(err)
 		c.AbortWithStatus(http.StatusForbidden)
 		return
 	}
 
 	token, err := h.service.generateAccessToken(strconv.Itoa(userId))
 	if err != nil {
-		fmt.Println(err)
+		h.l.Error(err)
 		c.AbortWithStatus(http.StatusForbidden)
 		return
 	}
