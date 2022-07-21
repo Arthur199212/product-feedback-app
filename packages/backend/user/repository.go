@@ -2,7 +2,6 @@ package user
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"time"
 )
@@ -13,19 +12,19 @@ type UserRepository interface {
 	GetById(id int) (User, error)
 }
 
-type userRepository struct {
+type userRepositoryPostgres struct {
 	db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *userRepository {
-	return &userRepository{db}
+func NewUserRepository(db *sql.DB) *userRepositoryPostgres {
+	return &userRepositoryPostgres{db}
 }
 
 const (
 	usersTable = "users"
 )
 
-func (r *userRepository) Create(user User) (int, error) {
+func (r *userRepositoryPostgres) Create(user User) (int, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO %s (email, name, user_name, avatar_url, created_at, updated_at)
 		VALUES($1, $2, $3, $4, $5, $6) RETURNING id
@@ -47,7 +46,7 @@ func (r *userRepository) Create(user User) (int, error) {
 	return id, err
 }
 
-func (r *userRepository) GetByEmail(email string) (User, error) {
+func (r *userRepositoryPostgres) GetByEmail(email string) (User, error) {
 	query := fmt.Sprintf(`
 		SELECT id, email, name, user_name, avatar_url, created_at, updated_at FROM %s
 		WHERE email=$1
@@ -67,7 +66,22 @@ func (r *userRepository) GetByEmail(email string) (User, error) {
 	return user, err
 }
 
-func (r *userRepository) GetById(id int) (User, error) {
-	// todo
-	return User{}, errors.New("not implemented")
+func (r *userRepositoryPostgres) GetById(id int) (User, error) {
+	query := fmt.Sprintf(`
+		SELECT id, email, name, user_name, avatar_url, created_at, updated_at FROM %s
+		WHERE id=$1
+	`, usersTable)
+
+	var user User
+	err := r.db.QueryRow(query, id).Scan(
+		&user.Id,
+		&user.Email,
+		&user.Name,
+		&user.UserName,
+		&user.AvatarUrl,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+
+	return user, err
 }
