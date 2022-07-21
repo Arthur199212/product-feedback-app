@@ -1,7 +1,9 @@
 package user
 
 import (
+	"database/sql"
 	"net/http"
+	"product-feedback/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +21,28 @@ func NewUserHandler(service UserService) UserHandler {
 }
 
 func (h *userHandler) getUser(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "getUser not implemented",
-	})
+	userId, err := middleware.GetUserIdFromGinCtx(c)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Unauthorized",
+		})
+	}
+
+	user, err := h.service.GetById(userId)
+	switch err {
+	case nil:
+		break
+	case sql.ErrNoRows:
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "User not found",
+		})
+		return
+	default:
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal service error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, user)
 }

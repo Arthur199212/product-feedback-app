@@ -9,6 +9,6 @@ import (
 func (h *userHandler) AddRoutes(rg *gin.RouterGroup) {
 	users := rg.Group("/users", middleware.AuthRequired)
 	{
-		users.GET("/:id", h.getUser)
+		users.GET("/me", h.getUser)
 	}
 }
