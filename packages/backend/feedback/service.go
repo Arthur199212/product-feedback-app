@@ -5,6 +5,7 @@ type FeedbackService interface {
 	Delete(userId, feedbackId int) error
 	GetAll() ([]Feedback, error)
 	GetById(userId, feedbackId int) (Feedback, error)
+	Update(userId, feedbackId int, f updateFeedbackInput) error
 }
 
 type feedbackService struct {
@@ -16,9 +17,6 @@ func NewFeedbackService(repo FeedbackRepository) FeedbackService {
 }
 
 func (s *feedbackService) Create(userId int, f createFeedbackInput) (int, error) {
-	if f.Status == "" {
-		f.Status = "idea"
-	}
 	return s.repo.Create(userId, f)
 }
 
@@ -32,4 +30,12 @@ func (s *feedbackService) GetAll() ([]Feedback, error) {
 
 func (s *feedbackService) GetById(userId, feedbackId int) (Feedback, error) {
 	return s.repo.GetById(userId, feedbackId)
+}
+
+func (s *feedbackService) Update(
+	userId,
+	feedbackId int,
+	f updateFeedbackInput,
+) error {
+	return s.repo.Update(userId, feedbackId, f)
 }

@@ -34,10 +34,10 @@ func NewFeedbackHandler(
 }
 
 type createFeedbackInput struct {
-	Title    string `json:"title" validate:"required,min=5,max=50"`
-	Body     string `json:"body" validate:"required,min=10,max=1000"`
-	Category string `json:"category" validate:"required,oneof=ui ux enchancement bug feature"`
-	Status   string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
+	Title    string  `json:"title" validate:"required,min=5,max=50"`
+	Body     string  `json:"body" validate:"required,min=10,max=1000"`
+	Category string  `json:"category" validate:"required,oneof=ui ux enchancement bug feature"`
+	Status   *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
 }
 
 func (h *feedbackHandler) createFeedback(c *gin.Context) {
@@ -105,6 +105,7 @@ func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
 	case nil:
 		break
 	case sql.ErrNoRows:
+		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusNotFound, map[string]interface{}{
 			"message": "Feedback not found",
 		})
@@ -179,8 +180,74 @@ func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
 	c.JSON(http.StatusOK, feedback)
 }
 
+type updateFeedbackInput struct {
+	Title    *string `json:"title" validate:"omitempty,min=5,max=50"`
+	Body     *string `json:"body" validate:"omitempty,min=10,max=1000"`
+	Category *string `json:"category" validate:"omitempty,oneof=ui ux enchancement bug feature"`
+	Status   *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
+}
+
 func (h *feedbackHandler) updateFeedback(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "updateFeedback not implemented",
+	userId, err := middleware.GetUserIdFromGinCtx(c)
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Unauthorized",
+		})
+		return
+	}
+
+	feedbackIdInt, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Invalid feedback id",
+		})
+		return
+	}
+
+	var input updateFeedbackInput
+	if err := c.BindJSON(&input); err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Invalid input",
+		})
+		return
+	}
+
+	if err = h.v.Validate(input); err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Invalid input",
+		})
+		return
+	}
+
+	err = h.service.Update(userId, feedbackIdInt, input)
+	switch err {
+	case nil:
+		break
+	case errNoInputToUpdate:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "No input to update",
+		})
+		return
+	case sql.ErrNoRows:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusNotFound, map[string]interface{}{
+			"message": "Feedback not found",
+		})
+		return
+	default:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "OK",
 	})
 }
