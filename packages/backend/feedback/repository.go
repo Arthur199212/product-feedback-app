@@ -8,6 +8,7 @@ import (
 
 type FeedbackRepository interface {
 	Create(userId int, f createFeedbackInput) (int, error)
+	GetById(userId, feedbackId int) (Feedback, error)
 }
 
 type feedbackRepository struct {
@@ -42,4 +43,25 @@ func (r *feedbackRepository) Create(userId int, f createFeedbackInput) (int, err
 	).Scan(&feedbackId)
 
 	return feedbackId, err
+}
+
+func (r *feedbackRepository) GetById(userId, feedbackId int) (Feedback, error) {
+	var f Feedback
+	query := fmt.Sprintf(`
+		SELECT id, title, body, category, status, user_id, created_at, updated_at FROM %s
+		WHERE user_id=$1 AND id=$2
+	`, feedbackTable)
+
+	err := r.db.QueryRow(query, userId, feedbackId).Scan(
+		&f.Id,
+		&f.Title,
+		&f.Body,
+		&f.Category,
+		&f.Stauts,
+		&f.UserId,
+		&f.CreatedAt,
+		&f.UpdatedAt,
+	)
+
+	return f, err
 }

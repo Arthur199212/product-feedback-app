@@ -33,7 +33,7 @@ func (h *userHandler) getUser(c *gin.Context) {
 	case nil:
 		break
 	case sql.ErrNoRows:
-		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+		c.AbortWithStatusJSON(http.StatusNotFound, map[string]interface{}{
 			"message": "User not found",
 		})
 		return

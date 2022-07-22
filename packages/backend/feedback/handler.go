@@ -1,9 +1,11 @@
 package feedback
 
 import (
+	"database/sql"
 	"net/http"
 	"product-feedback/middleware"
 	"product-feedback/validation"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -86,9 +88,42 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 }
 
 func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "getFeedbackById not implemented",
-	})
+	userId, err := middleware.GetUserIdFromGinCtx(c)
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Unauthorized",
+		})
+		return
+	}
+
+	feedbackIdInt, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Invalid feedback id",
+		})
+		return
+	}
+
+	feedback, err := h.service.GetById(userId, feedbackIdInt)
+	switch err {
+	case nil:
+		break
+	case sql.ErrNoRows:
+		c.AbortWithStatusJSON(http.StatusNotFound, map[string]interface{}{
+			"message": "Feedback not found",
+		})
+		return
+	default:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal service error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, feedback)
 }
 
 func (h *feedbackHandler) updateFeedback(c *gin.Context) {
