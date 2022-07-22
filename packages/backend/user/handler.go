@@ -39,7 +39,7 @@ func (h *userHandler) getUser(c *gin.Context) {
 		return
 	default:
 		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": "Internal service error",
+			"message": "Internal server error",
 		})
 		return
 	}

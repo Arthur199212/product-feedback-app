@@ -5,7 +5,7 @@ type Feedback struct {
 	Title     string `json:"title" db:"title"`
 	Body      string `json:"body" db:"body"`
 	Category  string `json:"category" db:"category"` // ui ux enchancement bug feature
-	Stauts    string `json:"status" db:"status"`     // idea defined in-progress done
+	Status    string `json:"status" db:"status"`     // idea defined in-progress done
 	UserId    int    `json:"userId" db:"user_id"`
 	CreatedAt string `json:"createdAt" db:"created_at"`
 	UpdatedAt string `json:"updatedAt" db:"updated_at"`

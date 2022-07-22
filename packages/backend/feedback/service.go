@@ -2,6 +2,7 @@ package feedback
 
 type FeedbackService interface {
 	Create(userId int, f createFeedbackInput) (int, error)
+	GetAll() ([]Feedback, error)
 	GetById(userId, feedbackId int) (Feedback, error)
 }
 
@@ -18,6 +19,10 @@ func (s *feedbackService) Create(userId int, f createFeedbackInput) (int, error)
 		f.Status = "idea"
 	}
 	return s.repo.Create(userId, f)
+}
+
+func (s *feedbackService) GetAll() ([]Feedback, error) {
+	return s.repo.GetAll()
 }
 
 func (s *feedbackService) GetById(userId, feedbackId int) (Feedback, error) {

@@ -33,12 +33,6 @@ func NewFeedbackHandler(
 	}
 }
 
-func (h *feedbackHandler) getAllFeedback(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "getAllFeedback not implemented",
-	})
-}
-
 type createFeedbackInput struct {
 	Title    string `json:"title" validate:"required,min=5,max=50"`
 	Body     string `json:"body" validate:"required,min=10,max=1000"`
@@ -77,7 +71,7 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 	if err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": "Internal service error",
+			"message": "Internal server error",
 		})
 		return
 	}
@@ -85,6 +79,30 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 	c.JSON(http.StatusOK, map[string]interface{}{
 		"feedbackId": feedbackId,
 	})
+}
+
+func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
+	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
+		"message": "deleteFeedback not implemented",
+	})
+}
+
+func (h *feedbackHandler) getAllFeedback(c *gin.Context) {
+	// todo: implement options:
+	// filter by: userId, category, status
+	// filter by group: status=idea&status=default&category=ui&category=ux
+	// sorted: most voted, least voted, most commented, least commented
+	// pagination: limit=<uint>, page=<uint>
+	fList, err := h.service.GetAll()
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, fList)
 }
 
 func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
@@ -118,7 +136,7 @@ func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
 	default:
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
-			"message": "Internal service error",
+			"message": "Internal server error",
 		})
 		return
 	}
@@ -129,11 +147,5 @@ func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
 func (h *feedbackHandler) updateFeedback(c *gin.Context) {
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "updateFeedback not implemented",
-	})
-}
-
-func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "deleteFeedback not implemented",
 	})
 }
