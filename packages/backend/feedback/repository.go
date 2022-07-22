@@ -8,6 +8,7 @@ import (
 
 type FeedbackRepository interface {
 	Create(userId int, f createFeedbackInput) (int, error)
+	Delete(userId, feedbackId int) error
 	GetAll() ([]Feedback, error)
 	GetById(userId, feedbackId int) (Feedback, error)
 }
@@ -44,6 +45,25 @@ func (r *feedbackRepository) Create(userId int, f createFeedbackInput) (int, err
 	).Scan(&feedbackId)
 
 	return feedbackId, err
+}
+
+func (r *feedbackRepository) Delete(userId, feedbackId int) error {
+	query := fmt.Sprintf(`
+		DELETE FROM %s
+		WHERE user_id=$1 AND id=$2
+	`, feedbackTable)
+
+	res, err := r.db.Exec(query, userId, feedbackId)
+	if err != nil {
+		return err
+	}
+
+	rows, err := res.RowsAffected()
+	if rows == 0 {
+		return sql.ErrNoRows
+	}
+
+	return err
 }
 
 func (r *feedbackRepository) GetAll() ([]Feedback, error) {
