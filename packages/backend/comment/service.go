@@ -2,6 +2,7 @@ package comment
 
 type CommentService interface {
 	Create(userId int, f createCommentInput) (int, error)
+	GetAll(feedbackId *int) ([]Comment, error)
 }
 
 type commentService struct {
@@ -14,4 +15,8 @@ func NewCommentService(repo CommentRepository) CommentService {
 
 func (s *commentService) Create(userId int, f createCommentInput) (int, error) {
 	return s.repo.Create(userId, f)
+}
+
+func (s *commentService) GetAll(feedbackId *int) ([]Comment, error) {
+	return s.repo.GetAll(feedbackId)
 }

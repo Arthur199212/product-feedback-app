@@ -3,11 +3,13 @@ package comment
 import (
 	"database/sql"
 	"fmt"
+	"strings"
 	"time"
 )
 
 type CommentRepository interface {
 	Create(userId int, f createCommentInput) (int, error)
+	GetAll(feedbackId *int) ([]Comment, error)
 }
 
 type commentRepository struct {
@@ -40,4 +42,56 @@ func (r *commentRepository) Create(userId int, f createCommentInput) (int, error
 	).Scan(&id)
 
 	return id, err
+}
+
+func (r *commentRepository) GetAll(feedbackId *int) ([]Comment, error) {
+	whereClauseValues := make([]string, 0, 1)
+	args := make([]interface{}, 0, 1)
+	argId := 1
+
+	if feedbackId != nil {
+		whereClauseValues = append(
+			whereClauseValues,
+			fmt.Sprintf("feedback_id=$%d", argId),
+		)
+		args = append(args, feedbackId)
+		argId++
+	}
+
+	whereClauseQuery := strings.Join(whereClauseValues, " AND ")
+	if len(whereClauseQuery) != 0 {
+		whereClauseQuery = "WHERE " + whereClauseQuery
+	}
+
+	// ORDER BY id ASC - shows earlier created first
+	query := fmt.Sprintf(`
+		SELECT id, body, feedback_id, user_id, created_at, updated_at FROM %s
+		%s
+		ORDER BY id ASC
+	`, commentsTable, whereClauseQuery)
+
+	rows, err := r.db.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	comments := []Comment{}
+	for rows.Next() {
+		var c Comment
+		err = rows.Scan(
+			&c.Id,
+			&c.Body,
+			&c.FeedbackId,
+			&c.UserId,
+			&c.CreatedAt,
+			&c.UpdatedAt,
+		)
+		if err != nil {
+			return comments, err
+		}
+		comments = append(comments, c)
+	}
+
+	return comments, nil
 }

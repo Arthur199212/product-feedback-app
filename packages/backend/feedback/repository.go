@@ -79,7 +79,7 @@ func (r *feedbackRepository) Delete(userId, feedbackId int) error {
 }
 
 func (r *feedbackRepository) GetAll() ([]Feedback, error) {
-	// ORDER BY id DESC - shows latest created first
+	// ORDER BY id DESC - shows later created first
 	query := fmt.Sprintf(`
 		SELECT id, title, body, category, status, user_id, created_at, updated_at FROM %s
 		ORDER BY id DESC

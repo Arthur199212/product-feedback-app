@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"product-feedback/middleware"
 	"product-feedback/validation"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -37,10 +38,26 @@ func (h *commentHandler) getAllComments(c *gin.Context) {
 	// sorted: date of creation, date of update
 	// pagination: limit/size=<uint>, page=<uint>
 
-	// todo: filter by feedback
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "getAllComments not implemented",
-	})
+	var feedbackIdInt *int
+	if feedbackId := c.Query("feedbackId"); feedbackId != "" {
+		parsedFeedbackId, err := strconv.Atoi(feedbackId)
+		if err != nil {
+			h.l.Warn(err)
+		} else {
+			feedbackIdInt = &parsedFeedbackId
+		}
+	}
+
+	comments, err := h.service.GetAll(feedbackIdInt)
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, comments)
 }
 
 type createCommentInput struct {
