@@ -10,7 +10,7 @@ func (h *commentHandler) AddRoutes(rg *gin.RouterGroup) {
 	comments := rg.Group("/comments", middleware.AuthRequired)
 	{
 		comments.GET("/", h.getAllComments)
-		comments.POST("/", h.addComment)
+		comments.POST("/", h.createComment)
 		comments.PUT("/:id", h.updateComment)
 		comments.DELETE("/:id", h.deleteComment)
 	}

@@ -59,7 +59,7 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 		return
 	}
 
-	if err := h.v.Validate(input); err != nil {
+	if err := h.v.ValidateStruct(input); err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
 			"message": err.Error(),
@@ -215,7 +215,7 @@ func (h *feedbackHandler) updateFeedback(c *gin.Context) {
 		return
 	}
 
-	if err = h.v.Validate(input); err != nil {
+	if err = h.v.ValidateStruct(input); err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "Invalid input",

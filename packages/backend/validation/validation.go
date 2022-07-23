@@ -11,6 +11,10 @@ func NewValidation() *Validation {
 	return &Validation{validator}
 }
 
-func (v *Validation) Validate(i interface{}) error {
+func (v *Validation) ValidateStruct(i interface{}) error {
 	return v.validator.Struct(i)
+}
+
+func (v *Validation) ValidateVar(i interface{}, tag string) error {
+	return v.validator.Var(i, tag)
 }

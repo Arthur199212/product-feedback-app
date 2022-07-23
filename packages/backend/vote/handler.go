@@ -19,6 +19,7 @@ func NewVoteHandler(service VoteService) VoteHandler {
 }
 
 func (h *voteHandler) getAllVotes(c *gin.Context) {
+	// todo: by feedback
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "getAllVotes not implemented",
 	})
@@ -31,6 +32,7 @@ func (h *voteHandler) addVote(c *gin.Context) {
 }
 
 func (h *voteHandler) deleteVote(c *gin.Context) {
+	// todo: when feedback is deleted -> delete related votes
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "deleteVote not implemented",
 	})

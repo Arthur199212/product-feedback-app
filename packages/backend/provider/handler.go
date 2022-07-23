@@ -33,9 +33,9 @@ func NewHandler(
 ) Handler {
 	return &handler{
 		Auth:     auth.NewAuthHandler(l, s.Auth),
-		Comment:  comment.NewCommentHandler(s.Comment),
+		Comment:  comment.NewCommentHandler(l, v, s.Comment),
 		Feedback: feedback.NewFeedbackHandler(l, v, s.Feedback),
-		User:     user.NewUserHandler(s.User),
+		User:     user.NewUserHandler(l, v, s.User),
 		Vote:     vote.NewVoteHandler(s.Vote),
 	}
 }
