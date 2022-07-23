@@ -3,6 +3,7 @@ package comment
 type CommentService interface {
 	Create(userId int, f createCommentInput) (int, error)
 	GetAll(feedbackId *int) ([]Comment, error)
+	GetById(commentId int) (Comment, error)
 }
 
 type commentService struct {
@@ -19,4 +20,8 @@ func (s *commentService) Create(userId int, f createCommentInput) (int, error) {
 
 func (s *commentService) GetAll(feedbackId *int) ([]Comment, error) {
 	return s.repo.GetAll(feedbackId)
+}
+
+func (s *commentService) GetById(commentId int) (Comment, error) {
+	return s.repo.GetById(commentId)
 }

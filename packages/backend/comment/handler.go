@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"database/sql"
 	"net/http"
 	"product-feedback/middleware"
 	"product-feedback/validation"
@@ -106,15 +107,54 @@ func (h *commentHandler) createComment(c *gin.Context) {
 	})
 }
 
-func (h *commentHandler) updateComment(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "updateComment not implemented",
-	})
-}
-
 func (h *commentHandler) deleteComment(c *gin.Context) {
 	// todo: when feedback is deleted -> delete related comments
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "deleteComment not implemented",
+	})
+}
+
+func (h *commentHandler) getCommentById(c *gin.Context) {
+	commentId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "commentId is invalid",
+		})
+		return
+	}
+
+	if err = h.v.ValidateVar(commentId, "required,gt=0"); err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "commentId is invalid",
+		})
+		return
+	}
+
+	comment, err := h.service.GetById(commentId)
+	switch err {
+	case nil:
+		break
+	case sql.ErrNoRows:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusNotFound, map[string]interface{}{
+			"message": "Comment not found",
+		})
+		return
+	default:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, comment)
+}
+
+func (h *commentHandler) updateComment(c *gin.Context) {
+	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
+		"message": "updateComment not implemented",
 	})
 }

@@ -10,6 +10,7 @@ import (
 type CommentRepository interface {
 	Create(userId int, f createCommentInput) (int, error)
 	GetAll(feedbackId *int) ([]Comment, error)
+	GetById(commentId int) (Comment, error)
 }
 
 type commentRepository struct {
@@ -94,4 +95,23 @@ func (r *commentRepository) GetAll(feedbackId *int) ([]Comment, error) {
 	}
 
 	return comments, nil
+}
+
+func (r *commentRepository) GetById(commentId int) (Comment, error) {
+	query := fmt.Sprintf(`
+		SELECT id, body, feedback_id, user_id, created_at, updated_at FROM %s
+		WHERE id=$1
+	`, commentsTable)
+
+	var c Comment
+	err := r.db.QueryRow(query, commentId).Scan(
+		&c.Id,
+		&c.Body,
+		&c.FeedbackId,
+		&c.UserId,
+		&c.CreatedAt,
+		&c.UpdatedAt,
+	)
+
+	return c, err
 }
