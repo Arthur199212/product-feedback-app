@@ -38,7 +38,7 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 		return
 	}
 
-	token, err := h.service.generateRefreshToken(strconv.Itoa(userId))
+	accessToken, err := h.service.generateAccessToken((strconv.Itoa(userId)))
 	if err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
@@ -47,16 +47,36 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie(
-		refreshTokenCookieName,
-		token,
-		int(refreshTokenTTL),
-		"/api/auth/refresh-token",
-		"localhost",
-		true,
-		true,
-	)
-	c.Redirect(http.StatusFound, "http://localhost:8000/")
+	refreshToken, err := h.service.generateRefreshToken(strconv.Itoa(userId))
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
+			"message": "login failed",
+		})
+		return
+	}
+
+	// Option with cookies
+	// c.SetCookie(
+	// 	refreshTokenCookieName,
+	// 	refreshToken,
+	// 	int(refreshTokenTTL),
+	// 	"/api/auth/refresh-token",
+	// 	"localhost",
+	// 	true,
+	// 	true,
+	// )
+
+	// Option with tokens in callbackUrl
+	q := url.Values{}
+	q.Set("access_token", accessToken)
+	q.Set("refresh_token", refreshToken)
+	loginCallbackUrlWithTokens := url.URL{
+		Path:     loginCallbackUrl,
+		RawQuery: q.Encode(),
+	}
+
+	c.Redirect(http.StatusFound, loginCallbackUrlWithTokens.RequestURI())
 }
 
 func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
