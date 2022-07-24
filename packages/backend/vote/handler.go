@@ -1,6 +1,7 @@
 package vote
 
 import (
+	"database/sql"
 	"net/http"
 	"product-feedback/middleware"
 	"product-feedback/validation"
@@ -106,8 +107,51 @@ func (h *voteHandler) createVote(c *gin.Context) {
 }
 
 func (h *voteHandler) deleteVote(c *gin.Context) {
-	// todo: when feedback is deleted -> delete related votes
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "deleteVote not implemented",
+	userId, err := middleware.GetUserIdFromGinCtx(c)
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Unauthorized",
+		})
+		return
+	}
+
+	voteIdInt, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "voteId is invalid",
+		})
+		return
+	}
+
+	if err = h.v.ValidateVar(voteIdInt, "required,gt=0"); err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "voteId is invalid",
+		})
+		return
+	}
+
+	err = h.service.Delete(userId, voteIdInt)
+	switch err {
+	case nil:
+		break
+	case sql.ErrNoRows:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusNotFound, map[string]interface{}{
+			"message": "Feedback not found",
+		})
+		return
+	default:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "OK",
 	})
 }

@@ -9,6 +9,7 @@ import (
 
 type VoteRepository interface {
 	Create(userId int, v createVoteInput) (int, error)
+	Delete(userId, voteId int) error
 	GetAll(feedbackId *int) ([]Vote, error)
 }
 
@@ -41,6 +42,25 @@ func (r *voteRepository) Create(userId int, v createVoteInput) (int, error) {
 	).Scan(&id)
 
 	return id, err
+}
+
+func (r *voteRepository) Delete(userId, voteId int) error {
+	query := fmt.Sprintf(`
+		DELETE FROM %s
+		WHERE user_id=$1 AND id=$2
+	`, votesTable)
+
+	res, err := r.db.Exec(query, userId, voteId)
+	if err != nil {
+		return err
+	}
+
+	rows, err := res.RowsAffected()
+	if err == nil && rows == 0 {
+		return sql.ErrNoRows
+	}
+
+	return err
 }
 
 func (r *voteRepository) GetAll(feedbackId *int) ([]Vote, error) {

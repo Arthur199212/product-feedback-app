@@ -2,6 +2,7 @@ package vote
 
 type VoteService interface {
 	Create(userId int, v createVoteInput) (int, error)
+	Delete(userId, voteId int) error
 	GetAll(feedbackId *int) ([]Vote, error)
 }
 
@@ -15,6 +16,10 @@ func NewVoteService(repo VoteRepository) VoteService {
 
 func (s *voteService) Create(userId int, v createVoteInput) (int, error) {
 	return s.repo.Create(userId, v)
+}
+
+func (s *voteService) Delete(userId, voteId int) error {
+	return s.repo.Delete(userId, voteId)
 }
 
 func (s *voteService) GetAll(feedbackId *int) ([]Vote, error) {
