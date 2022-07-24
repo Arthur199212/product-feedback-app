@@ -9,7 +9,7 @@ const (
 
 	ghLoginOauthAccessTokenURI = "https://github.com/login/oauth/access_token"
 	ghLoginOauthAuthorizeURI   = "https://github.com/login/oauth/authorize"
-	ghRedirectURI              = frontedAppUrl + "/api/auth/github/callback"
+	ghRedirectURI              = "https://go-product-feedback.herokuapp.com/api/auth/github/callback"
 	ghUserEmailsURI            = "https://api.github.com/user/emails"
 	ghUserEmailScope           = "user:email"
 

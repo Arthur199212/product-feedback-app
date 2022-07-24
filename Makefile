@@ -1,5 +1,5 @@
-include .env
-export
+# include .env
+# export
 
 MIGRATE_CMD=migrate -path ./migrations -database ${DATABASE_URL}
 

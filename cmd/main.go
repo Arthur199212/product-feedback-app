@@ -32,7 +32,7 @@ func main() {
 	log.SetOutput(logger.Writer())
 
 	if err := godotenv.Load(); err != nil {
-		logrus.Fatal("could not get evn vars", err)
+		logrus.Warn("could not get evn vars", err)
 	}
 
 	connStr := os.Getenv("DATABASE_URL")
