@@ -25,6 +25,8 @@ var (
 )
 
 func main() {
+	flag.Parse()
+
 	logger := logrus.New()
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	log.SetOutput(logger.Writer())
@@ -33,14 +35,8 @@ func main() {
 		logrus.Fatal("could not get evn vars", err)
 	}
 
-	db, err := database.NewPostgresDB(database.Config{
-		DBName:   os.Getenv("POSTGRES_DB"),
-		Host:     "localhost",
-		Password: os.Getenv("POSTGRES_PASSWORD"),
-		Port:     os.Getenv("POSTGRES_PORT"),
-		SSLMode:  "disable",
-		Username: os.Getenv("POSTGRES_USER"),
-	})
+	connStr := os.Getenv("DATABASE_URL")
+	db, err := database.NewPostgresDB(connStr)
 	if err != nil {
 		logger.Fatal("could not connect to the DB", err)
 	}
