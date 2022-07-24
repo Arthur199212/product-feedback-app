@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"product-feedback/middleware"
 	"product-feedback/validation"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -32,10 +33,31 @@ func NewVoteHandler(
 }
 
 func (h *voteHandler) getAllVotes(c *gin.Context) {
-	// todo: by feedback
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "getAllVotes not implemented",
-	})
+	var feedbackIdInt *int
+	if feedbackId := c.Query("feedbackId"); feedbackId != "" {
+		parsedFeedbackId, err := strconv.Atoi(feedbackId)
+		if err != nil {
+			h.l.Warn(err)
+		} else {
+			feedbackIdInt = &parsedFeedbackId
+		}
+	}
+
+	if err := h.v.ValidateVar(feedbackIdInt, "omitempty,gt=0"); err != nil {
+		h.l.Warn(err)
+		feedbackIdInt = nil
+	}
+
+	votes, err := h.service.GetAll(feedbackIdInt)
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, votes)
 }
 
 type createVoteInput struct {
