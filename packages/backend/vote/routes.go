@@ -10,7 +10,7 @@ func (h *voteHandler) AddRoutes(rg *gin.RouterGroup) {
 	votes := rg.Group("/votes", middleware.AuthRequired)
 	{
 		votes.GET("/", h.getAllVotes)
-		votes.POST("/", h.addVote)
+		votes.POST("/", h.createVote)
 		votes.DELETE("/:id", h.deleteVote)
 	}
 }

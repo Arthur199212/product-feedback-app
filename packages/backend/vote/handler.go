@@ -2,8 +2,11 @@ package vote
 
 import (
 	"net/http"
+	"product-feedback/middleware"
+	"product-feedback/validation"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 type VoteHandler interface {
@@ -11,11 +14,21 @@ type VoteHandler interface {
 }
 
 type voteHandler struct {
+	l       *logrus.Logger
+	v       *validation.Validation
 	service VoteService
 }
 
-func NewVoteHandler(service VoteService) VoteHandler {
-	return &voteHandler{service}
+func NewVoteHandler(
+	l *logrus.Logger,
+	v *validation.Validation,
+	service VoteService,
+) VoteHandler {
+	return &voteHandler{
+		l:       l,
+		v:       v,
+		service: service,
+	}
 }
 
 func (h *voteHandler) getAllVotes(c *gin.Context) {
@@ -25,9 +38,48 @@ func (h *voteHandler) getAllVotes(c *gin.Context) {
 	})
 }
 
-func (h *voteHandler) addVote(c *gin.Context) {
-	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
-		"message": "addVote not implemented",
+type createVoteInput struct {
+	FeedbackId int `json:"feedbackId" validate:"required,gt=0"`
+}
+
+func (h *voteHandler) createVote(c *gin.Context) {
+	userId, err := middleware.GetUserIdFromGinCtx(c)
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
+			"message": "Unauthorized",
+		})
+		return
+	}
+
+	var input createVoteInput
+	if err = c.BindJSON(&input); err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Vote is invalid",
+		})
+		return
+	}
+
+	if err = h.v.ValidateStruct(input); err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Vote is invalid",
+		})
+		return
+	}
+
+	voteId, err := h.service.Create(userId, input)
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
+			"message": "Internal server error",
+		})
+		return
+	}
+
+	c.JSON(http.StatusNotImplemented, map[string]interface{}{
+		"voteId": voteId,
 	})
 }
 

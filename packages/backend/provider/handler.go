@@ -36,7 +36,7 @@ func NewHandler(
 		Comment:  comment.NewCommentHandler(l, v, s.Comment),
 		Feedback: feedback.NewFeedbackHandler(l, v, s.Feedback),
 		User:     user.NewUserHandler(l, v, s.User),
-		Vote:     vote.NewVoteHandler(s.Vote),
+		Vote:     vote.NewVoteHandler(l, v, s.Vote),
 	}
 }
 
