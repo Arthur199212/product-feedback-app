@@ -32,7 +32,7 @@ func NewHandler(
 	s *Service,
 ) Handler {
 	return &handler{
-		Auth:     auth.NewAuthHandler(l, s.Auth),
+		Auth:     auth.NewAuthHandler(l, v, s.Auth),
 		Comment:  comment.NewCommentHandler(l, v, s.Comment),
 		Feedback: feedback.NewFeedbackHandler(l, v, s.Feedback),
 		User:     user.NewUserHandler(l, v, s.User),

@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"product-feedback/validation"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -16,12 +17,18 @@ type AuthHandler interface {
 
 type authHandler struct {
 	l       *logrus.Logger
+	v       *validation.Validation
 	service AuthService
 }
 
-func NewAuthHandler(l *logrus.Logger, service AuthService) AuthHandler {
+func NewAuthHandler(
+	l *logrus.Logger,
+	v *validation.Validation,
+	service AuthService,
+) AuthHandler {
 	return &authHandler{
 		l:       l,
+		v:       v,
 		service: service,
 	}
 }
@@ -58,7 +65,7 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 
 	// Option with cookies
 	// c.SetCookie(
-	// 	refreshTokenCookieName,
+	// 	"refresh-token",
 	// 	refreshToken,
 	// 	int(refreshTokenTTL),
 	// 	"/api/auth/refresh-token",
@@ -72,7 +79,7 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 	q.Set("access_token", accessToken)
 	q.Set("refresh_token", refreshToken)
 	loginCallbackUrlWithTokens := url.URL{
-		Path:     loginCallbackUrl,
+		Path:     os.Getenv("FRONTEND_APP_LOGIN_CALLBACK_URL"),
 		RawQuery: q.Encode(),
 	}
 
@@ -82,32 +89,59 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
 	q := url.Values{}
 	q.Set("client_id", os.Getenv("GITHUB_CLIENT_ID"))
-	q.Set("redirect_uri", ghRedirectURI)
+	q.Set("redirect_uri", os.Getenv("APP_URL")+ghRedirectURI)
 	q.Set("scope", ghUserEmailScope)
 	location := url.URL{Path: ghLoginOauthAuthorizeURI, RawQuery: q.Encode()}
 
 	c.Redirect(http.StatusFound, location.RequestURI())
 }
 
+type refreshAccessTokenInput struct {
+	RefreshToken string `json:"refreshToken" validate:"required,jwt"`
+}
+
 func (h *authHandler) refreshAccessToken(c *gin.Context) {
-	refreshToken, err := c.Cookie(refreshTokenCookieName)
-	if err != nil {
+	// Option with refresh token in cookie
+	// refreshToken, err := c.Cookie("refresh-token")
+	// if err != nil {
+	// 	h.l.Error(err)
+	// 	c.AbortWithStatus(http.StatusForbidden)
+	// 	return
+	// }
+
+	// Option with refresh token in request.body
+	var input refreshAccessTokenInput
+	if err := c.BindJSON(&input); err != nil {
 		h.l.Error(err)
-		c.AbortWithStatus(http.StatusForbidden)
+		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
+			"message": "Forbidden",
+		})
 		return
 	}
 
-	userId, err := h.service.verifyRefreshToken(refreshToken)
+	if err := h.v.ValidateStruct(input); err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
+			"message": "Forbidden",
+		})
+		return
+	}
+
+	userId, err := h.service.verifyRefreshToken(input.RefreshToken)
 	if err != nil {
 		h.l.Error(err)
-		c.AbortWithStatus(http.StatusForbidden)
+		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
+			"message": "Forbidden",
+		})
 		return
 	}
 
 	token, err := h.service.generateAccessToken(strconv.Itoa(userId))
 	if err != nil {
 		h.l.Error(err)
-		c.AbortWithStatus(http.StatusForbidden)
+		c.AbortWithStatusJSON(http.StatusForbidden, map[string]interface{}{
+			"message": "Forbidden",
+		})
 		return
 	}
 
