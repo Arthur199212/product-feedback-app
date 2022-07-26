@@ -21,6 +21,12 @@ func (s *feedbackService) Create(userId int, f createFeedbackInput) (int, error)
 }
 
 func (s *feedbackService) Delete(userId, feedbackId int) error {
+	// check if feedback exists
+	_, err := s.GetById(userId, feedbackId)
+	if err != nil {
+		return err
+	}
+
 	return s.repo.Delete(userId, feedbackId)
 }
 

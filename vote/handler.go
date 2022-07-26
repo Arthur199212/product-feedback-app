@@ -93,7 +93,16 @@ func (h *voteHandler) createVote(c *gin.Context) {
 	}
 
 	voteId, err := h.service.Create(userId, input)
-	if err != nil {
+	switch err {
+	case nil:
+		break
+	case ErrVoteAlreadyExists:
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": "Vote already exists",
+		})
+		return
+	default:
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
 			"message": "Internal server error",
@@ -140,7 +149,7 @@ func (h *voteHandler) deleteVote(c *gin.Context) {
 	case sql.ErrNoRows:
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusNotFound, map[string]interface{}{
-			"message": "Feedback not found",
+			"message": "Vote not found",
 		})
 		return
 	default:

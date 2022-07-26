@@ -11,6 +11,7 @@ type VoteRepository interface {
 	Create(userId int, v createVoteInput) (int, error)
 	Delete(userId, voteId int) error
 	GetAll(feedbackId *int) ([]Vote, error)
+	GetByFeedbackId(userId, feedbackId int) (Vote, error)
 }
 
 type voteRepository struct {
@@ -110,4 +111,25 @@ func (r *voteRepository) GetAll(feedbackId *int) ([]Vote, error) {
 	}
 
 	return votes, nil
+}
+
+func (r *voteRepository) GetByFeedbackId(
+	userId,
+	feedbackId int,
+) (Vote, error) {
+	query := fmt.Sprintf(`
+		SELECT id, feedback_id, user_id, created_at, updated_at FROM %s
+		WHERE user_id=$1 AND feedback_id=$2
+	`, votesTable)
+
+	var v Vote
+	err := r.db.QueryRow(query, userId, feedbackId).Scan(
+		&v.Id,
+		&v.FeedbackId,
+		&v.UserId,
+		&v.CreatedAt,
+		&v.UpdatedAt,
+	)
+
+	return v, err
 }

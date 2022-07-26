@@ -111,11 +111,7 @@ func (r *feedbackRepository) Delete(userId, feedbackId int) error {
 		return err
 	}
 
-	if err = tx.Commit(); err != nil {
-		return err
-	}
-
-	return nil
+	return tx.Commit()
 }
 
 func (r *feedbackRepository) GetAll() ([]Feedback, error) {
