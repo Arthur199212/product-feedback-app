@@ -82,7 +82,6 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 }
 
 func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
-	// todo: delete related comments & votes
 	userId, err := middleware.GetUserIdFromGinCtx(c)
 	if err != nil {
 		h.l.Error(err)

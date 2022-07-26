@@ -108,7 +108,6 @@ func (h *commentHandler) createComment(c *gin.Context) {
 }
 
 func (h *commentHandler) deleteComment(c *gin.Context) {
-	// todo: when feedback is deleted -> delete related comments
 	c.AbortWithStatusJSON(http.StatusNotImplemented, map[string]interface{}{
 		"message": "deleteComment not implemented",
 	})

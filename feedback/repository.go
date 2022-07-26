@@ -1,6 +1,7 @@
 package feedback
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -25,7 +26,9 @@ func NewFeedbackRepository(db *sql.DB) *feedbackRepository {
 }
 
 const (
+	commentsTable = "comments"
 	feedbackTable = "feedback"
+	votesTable    = "votes"
 
 	defaultFeedbackStatus = "idea"
 )
@@ -60,12 +63,42 @@ func (r *feedbackRepository) Create(userId int, f createFeedbackInput) (int, err
 }
 
 func (r *feedbackRepository) Delete(userId, feedbackId int) error {
-	query := fmt.Sprintf(`
+	ctx := context.Background()
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// delete related to feedback comments
+	deleteCommentsQuery := fmt.Sprintf(`
+		DELETE FROM %s
+		WHERE feedback_id=$1
+	`, commentsTable)
+
+	_, err = tx.ExecContext(ctx, deleteCommentsQuery, feedbackId)
+	if err != nil {
+		return err
+	}
+
+	// delete related to feedback votes
+	deleteVotesQuery := fmt.Sprintf(`
+		DELETE FROM %s
+		WHERE feedback_id=$1
+	`, votesTable)
+
+	_, err = tx.ExecContext(ctx, deleteVotesQuery, feedbackId)
+	if err != nil {
+		return err
+	}
+
+	// delete feedback
+	deleteFeedbackQuery := fmt.Sprintf(`
 		DELETE FROM %s
 		WHERE user_id=$1 AND id=$2
 	`, feedbackTable)
 
-	res, err := r.db.Exec(query, userId, feedbackId)
+	res, err := tx.ExecContext(ctx, deleteFeedbackQuery, userId, feedbackId)
 	if err != nil {
 		return err
 	}
@@ -74,8 +107,15 @@ func (r *feedbackRepository) Delete(userId, feedbackId int) error {
 	if err == nil && rows == 0 {
 		return sql.ErrNoRows
 	}
+	if err != nil {
+		return err
+	}
 
-	return err
+	if err = tx.Commit(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *feedbackRepository) GetAll() ([]Feedback, error) {
