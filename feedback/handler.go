@@ -86,7 +86,7 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 	})
 }
 
-// swagger:route DELETE /api/feedback feedback deleteFeedback
+// swagger:route DELETE /api/feedback/:id feedback deleteFeedback
 // Delete product feedback
 // responses:
 //	200: okResponse
@@ -209,7 +209,7 @@ type updateFeedbackInput struct {
 	Status   *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
 }
 
-// swagger:route GET /api/feedback/:id feedback updateFeedback
+// swagger:route PUT /api/feedback/:id feedback updateFeedback
 // Returns product feedback by id
 // responses:
 //	200: okResponse

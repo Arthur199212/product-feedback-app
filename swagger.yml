@@ -55,19 +55,31 @@ definitions:
         x-go-name: UserName
     type: object
     x-go-package: product-feedback/user
+  Vote:
+    properties:
+      createdAt:
+        type: string
+        x-go-name: CreatedAt
+      feedbackId:
+        format: int64
+        type: integer
+        x-go-name: FeedbackId
+      id:
+        format: int64
+        type: integer
+        x-go-name: Id
+      updatedAt:
+        type: string
+        x-go-name: UpdatedAt
+      userId:
+        format: int64
+        type: integer
+        x-go-name: UserId
+    type: object
+    x-go-package: product-feedback/vote
 info: {}
 paths:
   /api/feedback:
-    delete:
-      description: Delete product feedback
-      operationId: deleteFeedback
-      responses:
-        "200":
-          $ref: '#/responses/okResponse'
-        "404":
-          $ref: '#/responses/notFoundResponse'
-      tags:
-      - feedback
     get:
       description: Returns all product feedback in the system
       operationId: getAllFeedback
@@ -85,7 +97,27 @@ paths:
       tags:
       - feedback
   /api/feedback/:id:
+    delete:
+      description: Delete product feedback
+      operationId: deleteFeedback
+      responses:
+        "200":
+          $ref: '#/responses/okResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
+      tags:
+      - feedback
     get:
+      description: Returns product feedback by id
+      operationId: getFeedbackById
+      responses:
+        "200":
+          $ref: '#/responses/getFeedbackByIdResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
+      tags:
+      - feedback
+    put:
       description: Returns product feedback by id
       operationId: updateFeedback
       responses:
@@ -117,6 +149,34 @@ paths:
           $ref: '#/responses/getUserResponse'
       tags:
       - users
+  /api/votes:
+    get:
+      description: Returns a list of votes in the system
+      operationId: getAllVotes
+      responses:
+        "200":
+          $ref: '#/responses/getAllVotesResponse'
+      tags:
+      - votes
+    post:
+      description: Creates a vote
+      operationId: createVote
+      responses:
+        "200":
+          $ref: '#/responses/createVoteResponse'
+      tags:
+      - votes
+  /api/votes/:id:
+    delete:
+      description: Deletes a vote
+      operationId: deleteVote
+      responses:
+        "200":
+          $ref: '#/responses/okResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - votes
 responses:
   badRequestResponse:
     description: Bad request response
@@ -135,11 +195,21 @@ responses:
           type: string
           x-go-name: FeedbacId
       type: object
+  createVoteResponse:
+    description: OK response
+    schema:
+      properties:
+        voteId:
+          description: id of a newly created vote
+          type: string
+          x-go-name: VoteId
+      type: object
   errorResponse:
     description: Error response
     schema:
       properties:
         message:
+          description: Error message
           type: string
           x-go-name: Message
       type: object
@@ -148,6 +218,12 @@ responses:
     schema:
       items:
         $ref: '#/definitions/Feedback'
+      type: array
+  getAllVotesResponse:
+    description: OK response
+    schema:
+      items:
+        $ref: '#/definitions/Vote'
       type: array
   getFeedbackByIdResponse:
     description: Returns product feedback by id

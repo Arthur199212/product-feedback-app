@@ -33,6 +33,11 @@ func NewVoteHandler(
 	}
 }
 
+// swagger:route GET /api/votes votes getAllVotes
+// Returns a list of votes in the system
+// responses:
+//	200: getAllVotesResponse
+
 func (h *voteHandler) getAllVotes(c *gin.Context) {
 	var feedbackIdInt *int
 	if feedbackId := c.Query("feedbackId"); feedbackId != "" {
@@ -64,6 +69,11 @@ func (h *voteHandler) getAllVotes(c *gin.Context) {
 type createVoteInput struct {
 	FeedbackId int `json:"feedbackId" validate:"required,gt=0"`
 }
+
+// swagger:route POST /api/votes votes createVote
+// Creates a vote
+// responses:
+//	200: createVoteResponse
 
 func (h *voteHandler) createVote(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
@@ -114,6 +124,12 @@ func (h *voteHandler) createVote(c *gin.Context) {
 		"voteId": voteId,
 	})
 }
+
+// swagger:route DELETE /api/votes/:id votes deleteVote
+// Deletes a vote
+// responses:
+//	200: okResponse
+//	404: errorResponse
 
 func (h *voteHandler) deleteVote(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
