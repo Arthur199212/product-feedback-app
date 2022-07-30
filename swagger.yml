@@ -1,3 +1,6 @@
+basePath: /
+consumes:
+- application/json
 definitions:
   Comment:
     properties:
@@ -101,8 +104,42 @@ definitions:
         x-go-name: UserId
     type: object
     x-go-package: product-feedback/vote
-info: {}
+info:
+  description: Documentation Product Feedback API
+  title: Product Feedback API
+  version: 1.0.0
 paths:
+  /api/auth/github:
+    get:
+      description: Redirects to GitHub authentication
+      operationId: loginWithGitHub
+      responses:
+        "302":
+          $ref: '#/responses/foundResponse'
+      tags:
+      - auth
+  /api/auth/github/callback:
+    get:
+      description: Redirects to GitHub authentication
+      operationId: loginWithGitHub
+      responses:
+        "302":
+          $ref: '#/responses/foundResponse'
+        "403":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - auth
+  /api/auth/refresh-token:
+    post:
+      description: Redirects to GitHub authentication
+      operationId: refreshAccessToken
+      responses:
+        "200":
+          $ref: '#/responses/refreshAccessTokenResponse'
+        "403":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - auth
   /api/comments:
     get:
       description: Returns a list of all comments in the system
@@ -229,6 +266,8 @@ paths:
           $ref: '#/responses/errorResponse'
       tags:
       - votes
+produces:
+- application/json
 responses:
   badRequestResponse:
     description: Bad request response
@@ -274,6 +313,8 @@ responses:
           type: string
           x-go-name: Message
       type: object
+  foundResponse:
+    description: Redirects to login route
   getAllCommentsResponse:
     description: Returns a list of all comments in the system
     schema:
@@ -317,4 +358,15 @@ responses:
           type: string
           x-go-name: Message
       type: object
+  refreshAccessTokenResponse:
+    description: OK response
+    schema:
+      properties:
+        accessToken:
+          description: Access token
+          type: string
+          x-go-name: AccessToken
+      type: object
+schemes:
+- http
 swagger: "2.0"

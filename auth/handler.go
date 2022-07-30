@@ -33,6 +33,12 @@ func NewAuthHandler(
 	}
 }
 
+// swagger:route GET /api/auth/github/callback auth loginWithGitHub
+// Redirects to GitHub authentication
+// responses:
+//	302: foundResponse
+//	403: errorResponse
+
 func (h *authHandler) loginWithGitHub(c *gin.Context) {
 	code := c.Query("code")
 
@@ -86,6 +92,11 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 	c.Redirect(http.StatusFound, loginCallbackUrlWithTokens.RequestURI())
 }
 
+// swagger:route GET /api/auth/github auth loginWithGitHub
+// Redirects to GitHub authentication
+// responses:
+//	302: foundResponse
+
 func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
 	q := url.Values{}
 	q.Set("client_id", os.Getenv("GITHUB_CLIENT_ID"))
@@ -99,6 +110,12 @@ func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
 type refreshAccessTokenInput struct {
 	RefreshToken string `json:"refreshToken" validate:"required,jwt"`
 }
+
+// swagger:route POST /api/auth/refresh-token auth refreshAccessToken
+// Redirects to GitHub authentication
+// responses:
+//	200: refreshAccessTokenResponse
+//	403: errorResponse
 
 func (h *authHandler) refreshAccessToken(c *gin.Context) {
 	// Option with refresh token in cookie
