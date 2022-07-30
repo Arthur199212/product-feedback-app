@@ -1,4 +1,28 @@
 definitions:
+  Comment:
+    properties:
+      body:
+        type: string
+        x-go-name: Body
+      createdAt:
+        type: string
+        x-go-name: CreatedAt
+      feedbackId:
+        format: int64
+        type: integer
+        x-go-name: FeedbackId
+      id:
+        type: string
+        x-go-name: Id
+      updatedAt:
+        type: string
+        x-go-name: UpdatedAt
+      userId:
+        format: int64
+        type: integer
+        x-go-name: UserId
+    type: object
+    x-go-package: product-feedback/comment
   Feedback:
     properties:
       body:
@@ -79,6 +103,34 @@ definitions:
     x-go-package: product-feedback/vote
 info: {}
 paths:
+  /api/comments:
+    get:
+      description: Returns a list of all comments in the system
+      operationId: getAllComments
+      responses:
+        "200":
+          $ref: '#/responses/getAllCommentsResponse'
+      tags:
+      - comments
+    post:
+      description: Creates a comment
+      operationId: createComment
+      responses:
+        "200":
+          $ref: '#/responses/createCommentResponse'
+      tags:
+      - comments
+  /api/comments/:id:
+    get:
+      description: Returns comment by id
+      operationId: getCommentById
+      responses:
+        "200":
+          $ref: '#/responses/okResponse'
+        "404":
+          $ref: '#/responses/errorResponse'
+      tags:
+      - comments
   /api/feedback:
     get:
       description: Returns all product feedback in the system
@@ -186,6 +238,15 @@ responses:
           type: string
           x-go-name: Message
       type: object
+  createCommentResponse:
+    description: Create comment response
+    schema:
+      properties:
+        commentId:
+          description: id of a newly created comment
+          type: string
+          x-go-name: CommentId
+      type: object
   createFeedbackResponse:
     description: OK response
     schema:
@@ -213,6 +274,12 @@ responses:
           type: string
           x-go-name: Message
       type: object
+  getAllCommentsResponse:
+    description: Returns a list of all comments in the system
+    schema:
+      items:
+        $ref: '#/definitions/Comment'
+      type: array
   getAllFeedbackResponse:
     description: Returns all product feedback in the system
     schema:

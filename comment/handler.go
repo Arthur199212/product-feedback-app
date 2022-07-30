@@ -33,6 +33,11 @@ func NewCommentHandler(
 	}
 }
 
+// swagger:route GET /api/comments comments getAllComments
+// Returns a list of all comments in the system
+// responses:
+//	200: getAllCommentsResponse
+
 func (h *commentHandler) getAllComments(c *gin.Context) {
 	// todo: implement options:
 	// filter by: userId
@@ -65,6 +70,11 @@ type createCommentInput struct {
 	Body       string `json:"body" validate:"required,min=5,max=255"`
 	FeedbackId int    `json:"feedbackId" validate:"required,gt=0"`
 }
+
+// swagger:route POST /api/comments comments createComment
+// Creates a comment
+// responses:
+//	200: createCommentResponse
 
 func (h *commentHandler) createComment(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
@@ -112,6 +122,12 @@ func (h *commentHandler) deleteComment(c *gin.Context) {
 		"message": "deleteComment not implemented",
 	})
 }
+
+// swagger:route GET /api/comments/:id comments getCommentById
+// Returns comment by id
+// responses:
+//	200: okResponse
+//	404: errorResponse
 
 func (h *commentHandler) getCommentById(c *gin.Context) {
 	commentId, err := strconv.Atoi(c.Param("id"))
