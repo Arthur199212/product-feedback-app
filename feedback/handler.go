@@ -40,6 +40,11 @@ type createFeedbackInput struct {
 	Status   *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
 }
 
+// swagger:route POST /api/feedback feedback createFeedback
+// Create product feedback
+// responses:
+//	200: createFeedbackResponse
+
 func (h *feedbackHandler) createFeedback(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
 	if err != nil {
@@ -80,6 +85,12 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 		"feedbackId": feedbackId,
 	})
 }
+
+// swagger:route DELETE /api/feedback feedback deleteFeedback
+// Delete product feedback
+// responses:
+//	200: okResponse
+//	404: notFoundResponse
 
 func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
@@ -123,6 +134,11 @@ func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
 	})
 }
 
+// swagger:route GET /api/feedback feedback getAllFeedback
+// Returns all product feedback in the system
+// responses:
+//	200: getAllFeedbackResponse
+
 func (h *feedbackHandler) getAllFeedback(c *gin.Context) {
 	// todo: implement options:
 	// filter by: userId, category, status
@@ -140,6 +156,12 @@ func (h *feedbackHandler) getAllFeedback(c *gin.Context) {
 
 	c.JSON(http.StatusOK, fList)
 }
+
+// swagger:route GET /api/feedback/:id feedback getFeedbackById
+// Returns product feedback by id
+// responses:
+//	200: getFeedbackByIdResponse
+//	404: notFoundResponse
 
 func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
@@ -186,6 +208,13 @@ type updateFeedbackInput struct {
 	Category *string `json:"category" validate:"omitempty,oneof=ui ux enchancement bug feature"`
 	Status   *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
 }
+
+// swagger:route GET /api/feedback/:id feedback updateFeedback
+// Returns product feedback by id
+// responses:
+//	200: okResponse
+//	400: badRequestResponse
+//	404: notFoundResponse
 
 func (h *feedbackHandler) updateFeedback(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)

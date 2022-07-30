@@ -18,14 +18,20 @@ up:
 down:
 	docker compose down
 
-migrate-up:
+migrate_up:
 	${MIGRATE_CMD} up
 
-migrate-down:
+migrate_down:
 	${MIGRATE_CMD} down
 
 lint:
 	gofmt -d .
 
-lint-fix:
+lint_fix:
 	gofmt -w .
+
+check_swagger_install:
+	which swagger || go get -u github.com/go-swagger/go-swagger/cmd/swagger
+
+swagger: check_swagger_install
+	swagger generate spec -o ./swagger.yml --scan-models

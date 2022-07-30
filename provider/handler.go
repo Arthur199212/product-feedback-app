@@ -1,3 +1,18 @@
+// Package classification Product Feedback API
+//
+// Documentation Product Feedback API
+//
+//	Schemes: http
+//	BasePath: /
+//	Version: 1.0.0
+//
+//	Consumes:
+//	- application/json
+//
+//	Produces:
+//	- application/json
+//
+// swagger:meta
 package provider
 
 import (
@@ -12,6 +27,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+
+	go_openapi_middleware "github.com/go-openapi/runtime/middleware"
 )
 
 type Handler interface {
@@ -48,6 +65,14 @@ func (h *handler) InitRoutes() *gin.Engine {
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "Product Feedback Api")
 	})
+
+	// https://youtu.be/07XhTqE-j8k?t=1623
+
+	opts := go_openapi_middleware.RedocOpts{SpecURL: "/swagger.yml"}
+	sh := go_openapi_middleware.Redoc(opts, nil)
+
+	router.StaticFile("swagger.yml", "./swagger.yml")
+	router.GET("/docs", gin.WrapH(sh))
 
 	api := router.Group("/api")
 

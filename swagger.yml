@@ -1,0 +1,129 @@
+basePath: /
+consumes:
+- application/json
+definitions:
+  Feedback:
+    properties:
+      body:
+        type: string
+        x-go-name: Body
+      category:
+        type: string
+        x-go-name: Category
+      createdAt:
+        type: string
+        x-go-name: CreatedAt
+      id:
+        format: int64
+        type: integer
+        x-go-name: Id
+      status:
+        type: string
+        x-go-name: Status
+      title:
+        type: string
+        x-go-name: Title
+      updatedAt:
+        type: string
+        x-go-name: UpdatedAt
+      userId:
+        format: int64
+        type: integer
+        x-go-name: UserId
+    type: object
+    x-go-package: product-feedback/feedback
+info:
+  description: Documentation Product Feedback API
+  title: Product Feedback API
+  version: 1.0.0
+paths:
+  /api/feedback:
+    delete:
+      description: Delete product feedback
+      operationId: deleteFeedback
+      responses:
+        "200":
+          $ref: '#/responses/okResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
+      tags:
+      - feedback
+    get:
+      description: Returns all product feedback in the system
+      operationId: getAllFeedback
+      responses:
+        "200":
+          $ref: '#/responses/getAllFeedbackResponse'
+      tags:
+      - feedback
+    post:
+      description: Create product feedback
+      operationId: createFeedback
+      responses:
+        "200":
+          $ref: '#/responses/createFeedbackResponse'
+      tags:
+      - feedback
+  /api/feedback/:id:
+    get:
+      description: Returns product feedback by id
+      operationId: updateFeedback
+      responses:
+        "200":
+          $ref: '#/responses/okResponse'
+        "400":
+          $ref: '#/responses/badRequestResponse'
+        "404":
+          $ref: '#/responses/notFoundResponse'
+      tags:
+      - feedback
+produces:
+- application/json
+responses:
+  badRequestResponse:
+    description: Bad request response
+    schema:
+      properties:
+        message:
+          type: string
+          x-go-name: Message
+      type: object
+  createFeedbackResponse:
+    description: ""
+    schema:
+      properties:
+        feedbackId:
+          description: id of a newly created feedback
+          type: string
+          x-go-name: FeedbacId
+      type: object
+  getAllFeedbackResponse:
+    description: Returns all product feedback in the system
+    schema:
+      items:
+        $ref: '#/definitions/Feedback'
+      type: array
+  getFeedbackByIdResponse:
+    description: Returns product feedback by id
+    schema:
+      $ref: '#/definitions/Feedback'
+  notFoundResponse:
+    description: Not found feedback response
+    schema:
+      properties:
+        message:
+          type: string
+          x-go-name: Message
+      type: object
+  okResponse:
+    description: OK response
+    schema:
+      properties:
+        message:
+          description: OK message
+          type: string
+          x-go-name: Message
+      type: object
+schemes:
+- http
+swagger: "2.0"
