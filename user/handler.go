@@ -33,6 +33,11 @@ func NewUserHandler(
 	}
 }
 
+// swagger:route GET /api/users/me users getMe
+// Returs user data
+// responses:
+//	200: getUserResponse
+
 func (h *userHandler) getMe(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
 	if err != nil {
@@ -59,6 +64,12 @@ func (h *userHandler) getMe(c *gin.Context) {
 
 	c.JSON(http.StatusOK, user)
 }
+
+// swagger:route GET /api/users/:id users getUserById
+// Returs user data by id
+// responses:
+//	200: getUserResponse
+//	404: errorResponse
 
 func (h *userHandler) getUserById(c *gin.Context) {
 	userId, err := strconv.Atoi(c.Param("id"))
