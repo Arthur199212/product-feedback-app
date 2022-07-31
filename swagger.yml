@@ -39,35 +39,54 @@ definitions:
     x-go-package: product-feedback/comment
   Feedback:
     properties:
+      body:
+        description: Body of the feedback
+        maxLength: 1000
+        minLength: 10
+        type: string
+        x-go-name: Body
+      category:
+        description: |-
+          Category of the feedback
+
+          Possible categories: 'ui', 'ux', 'enchancement', 'bug', 'feature'
+        type: string
+        x-go-name: Category
       createdAt:
-        description: Time this vote was created at
+        description: Time feedback was created at
         type: string
         x-go-name: CreatedAt
-      feedbackId:
-        description: Feedback id that this vote is related to
-        format: int64
-        minimum: 1
-        type: integer
-        x-go-name: FeedbackId
       id:
-        description: Id of the vote
+        description: Id of the feedback
         format: int64
         minimum: 1
         type: integer
         x-go-name: Id
+      status:
+        description: |-
+          Status of the feedback
+
+          Possible statuses: 'idea', 'defined', 'in-progress', 'done'
+        type: string
+        x-go-name: Status
+      title:
+        description: Title of the feedback
+        maxLength: 50
+        minLength: 5
+        type: string
+        x-go-name: Title
       updatedAt:
-        description: Time this vote was updated at
+        description: Time feedback was updated at
         type: string
         x-go-name: UpdatedAt
       userId:
-        description: Id of a user that created this vote
+        description: Id of a user who created a feedback
         format: int64
         minimum: 1
         type: integer
         x-go-name: UserId
     type: object
-    x-go-name: Vote
-    x-go-package: product-feedback/vote
+    x-go-package: product-feedback/feedback
   User:
     properties:
       avatar_url:
@@ -107,6 +126,36 @@ definitions:
         x-go-name: UserName
     type: object
     x-go-package: product-feedback/user
+  Vote:
+    properties:
+      createdAt:
+        description: Time this vote was created at
+        type: string
+        x-go-name: CreatedAt
+      feedbackId:
+        description: Feedback id that this vote is related to
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: FeedbackId
+      id:
+        description: Id of the vote
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: Id
+      updatedAt:
+        description: Time this vote was updated at
+        type: string
+        x-go-name: UpdatedAt
+      userId:
+        description: Id of a user that created this vote
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: UserId
+    type: object
+    x-go-package: product-feedback/vote
 info:
   description: Documentation Product Feedback API
   title: Product Feedback API
@@ -352,7 +401,7 @@ responses:
     description: OK response
     schema:
       items:
-        $ref: '#/definitions/Feedback'
+        $ref: '#/definitions/Vote'
       type: array
   getFeedbackByIdResponse:
     description: Returns product feedback by id

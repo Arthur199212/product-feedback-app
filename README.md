@@ -1,5 +1,9 @@
 # Product Feedback App Backend
 
+## Links
+
+- [Swagger](https://go-product-feedback.herokuapp.com/docs)
+
 ## Technologies
 
 - [Go](https://go.dev/)
@@ -9,11 +13,12 @@
 - [PostgreSQL](https://www.postgresql.org/)
 - [logrus](https://github.com/sirupsen/logrus)
 - [Heroku](https://www.heroku.com/)
+- [Swagger](https://goswagger.io/)
 
 ## How to Start
 
 1. Run `make up` to spin up PostgreSQL DB with Docker compose.
-1. Install [golang-migrate/migrate](https://github.com/golang-migrate/migrate) and run `make migrate-up` to run migrations.
+1. Install [golang-migrate/migrate](https://github.com/golang-migrate/migrate) and run `make migrate_up` to run migrations.
 1. Create `.env` file (see `.env.example` as an example).
 1. Run `make run` to start server.
 
@@ -25,11 +30,11 @@
 - [x] Create, Read operations with Comments
 - [x] Create, Read, Delete a Votes
 - [x] Deployed (Heroku), [endpoint](https://go-product-feedback.herokuapp.com/)
+- [x] Add [Swagger documentation](https://go-product-feedback.herokuapp.com/docs)
 
 ## Todo
 
 - [ ] Setup CICD
-- [ ] Add Swagger
 - [ ] Add unit-tests
 - [ ] Add api-tests
 - [ ] Update, Delete operations with Comments

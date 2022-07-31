@@ -1,6 +1,6 @@
 package vote
 
-// swagger:model Feedback
+// swagger:model Vote
 type Vote struct {
 	// Id of the vote
 	//
