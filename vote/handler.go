@@ -35,6 +35,10 @@ func NewVoteHandler(
 
 // swagger:route GET /api/votes votes getAllVotes
 // Returns a list of votes in the system
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: getAllVotesResponse
 
@@ -72,6 +76,10 @@ type createVoteInput struct {
 
 // swagger:route POST /api/votes votes createVote
 // Creates a vote
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: createVoteResponse
 
@@ -127,6 +135,10 @@ func (h *voteHandler) createVote(c *gin.Context) {
 
 // swagger:route DELETE /api/votes/:id votes deleteVote
 // Deletes a vote
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: okResponse
 //	404: errorResponse

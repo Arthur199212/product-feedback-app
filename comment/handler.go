@@ -35,6 +35,10 @@ func NewCommentHandler(
 
 // swagger:route GET /api/comments comments getAllComments
 // Returns a list of all comments in the system
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: getAllCommentsResponse
 
@@ -73,6 +77,10 @@ type createCommentInput struct {
 
 // swagger:route POST /api/comments comments createComment
 // Creates a comment
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: createCommentResponse
 
@@ -125,6 +133,10 @@ func (h *commentHandler) deleteComment(c *gin.Context) {
 
 // swagger:route GET /api/comments/:id comments getCommentById
 // Returns comment by id
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: okResponse
 //	404: errorResponse

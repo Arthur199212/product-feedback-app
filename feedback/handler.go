@@ -42,6 +42,10 @@ type createFeedbackInput struct {
 
 // swagger:route POST /api/feedback feedback createFeedback
 // Create product feedback
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: createFeedbackResponse
 
@@ -88,9 +92,13 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 
 // swagger:route DELETE /api/feedback/:id feedback deleteFeedback
 // Delete product feedback
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: okResponse
-//	404: notFoundResponse
+//	404: errorResponse
 
 func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
@@ -136,6 +144,10 @@ func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
 
 // swagger:route GET /api/feedback feedback getAllFeedback
 // Returns all product feedback in the system
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: getAllFeedbackResponse
 
@@ -159,9 +171,13 @@ func (h *feedbackHandler) getAllFeedback(c *gin.Context) {
 
 // swagger:route GET /api/feedback/:id feedback getFeedbackById
 // Returns product feedback by id
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: getFeedbackByIdResponse
-//	404: notFoundResponse
+//	404: errorResponse
 
 func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
@@ -211,10 +227,14 @@ type updateFeedbackInput struct {
 
 // swagger:route PUT /api/feedback/:id feedback updateFeedback
 // Returns product feedback by id
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: okResponse
-//	400: badRequestResponse
-//	404: notFoundResponse
+//	400: errorResponse
+//	404: errorResponse
 
 func (h *feedbackHandler) updateFeedback(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)

@@ -2,15 +2,21 @@
 //
 // Documentation Product Feedback API
 //
-//	Schemes: http
-//	BasePath: /
-//	Version: 1.0.0
+//  Schemes: http
+//  BasePath: /
+//  Version: 1.0.0
 //
-//	Consumes:
-//	- application/json
+//  Consumes:
+//  - application/json
 //
-//	Produces:
-//	- application/json
+//  Produces:
+//  - application/json
+//
+//  SecurityDefinitions:
+//  Bearer:
+//    type: apiKey
+//    in: header
+//    name: Authorization
 //
 // swagger:meta
 package provider
@@ -65,8 +71,6 @@ func (h *handler) InitRoutes() *gin.Engine {
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, "Product Feedback Api")
 	})
-
-	// https://youtu.be/07XhTqE-j8k?t=1623
 
 	opts := go_openapi_middleware.RedocOpts{SpecURL: "/swagger.yml"}
 	sh := go_openapi_middleware.Redoc(opts, nil)

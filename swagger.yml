@@ -5,105 +5,108 @@ definitions:
   Comment:
     properties:
       body:
+        description: Body of the comment
+        maxLength: 255
+        minLength: 5
         type: string
         x-go-name: Body
       createdAt:
+        description: Time comment was created at
         type: string
         x-go-name: CreatedAt
       feedbackId:
+        description: Id of the feedback this comment is related to
         format: int64
+        minimum: 1
         type: integer
         x-go-name: FeedbackId
       id:
+        description: Id of the comment
+        minimum: 1
         type: string
         x-go-name: Id
       updatedAt:
+        description: Time comment was updated at
         type: string
         x-go-name: UpdatedAt
       userId:
+        description: Id of the user who created the comment
         format: int64
+        minimum: 1
         type: integer
         x-go-name: UserId
     type: object
     x-go-package: product-feedback/comment
   Feedback:
     properties:
-      body:
-        type: string
-        x-go-name: Body
-      category:
-        type: string
-        x-go-name: Category
       createdAt:
+        description: Time this vote was created at
         type: string
         x-go-name: CreatedAt
-      id:
+      feedbackId:
+        description: Feedback id that this vote is related to
         format: int64
+        minimum: 1
+        type: integer
+        x-go-name: FeedbackId
+      id:
+        description: Id of the vote
+        format: int64
+        minimum: 1
         type: integer
         x-go-name: Id
-      status:
-        type: string
-        x-go-name: Status
-      title:
-        type: string
-        x-go-name: Title
       updatedAt:
+        description: Time this vote was updated at
         type: string
         x-go-name: UpdatedAt
       userId:
+        description: Id of a user that created this vote
         format: int64
+        minimum: 1
         type: integer
         x-go-name: UserId
     type: object
-    x-go-package: product-feedback/feedback
+    x-go-name: Vote
+    x-go-package: product-feedback/vote
   User:
     properties:
       avatar_url:
+        description: Avatar URL
         type: string
         x-go-name: AvatarUrl
       created_at:
+        description: Time the user was created at
         type: string
         x-go-name: CreatedAt
       email:
+        description: Email of the user
+        example: user@company.com
         type: string
         x-go-name: Email
       id:
+        description: Id of the user
         format: int64
+        minimum: 1
         type: integer
         x-go-name: Id
       name:
+        description: Name of the user
+        maxLength: 50
+        minLength: 2
         type: string
         x-go-name: Name
       updated_at:
+        description: Time the user was updated at
         type: string
         x-go-name: UpdatedAt
       user_name:
+        description: User name
+        maxLength: 50
+        minLength: 2
         type: string
         x-go-name: UserName
     type: object
     x-go-package: product-feedback/user
-  Vote:
-    properties:
-      createdAt:
-        type: string
-        x-go-name: CreatedAt
-      feedbackId:
-        format: int64
-        type: integer
-        x-go-name: FeedbackId
-      id:
-        format: int64
-        type: integer
-        x-go-name: Id
-      updatedAt:
-        type: string
-        x-go-name: UpdatedAt
-      userId:
-        format: int64
-        type: integer
-        x-go-name: UserId
-    type: object
-    x-go-package: product-feedback/vote
 info:
   description: Documentation Product Feedback API
   title: Product Feedback API
@@ -147,6 +150,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/getAllCommentsResponse'
+      security:
+      - Bearer: []
       tags:
       - comments
     post:
@@ -155,6 +160,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/createCommentResponse'
+      security:
+      - Bearer: []
       tags:
       - comments
   /api/comments/:id:
@@ -166,6 +173,8 @@ paths:
           $ref: '#/responses/okResponse'
         "404":
           $ref: '#/responses/errorResponse'
+      security:
+      - Bearer: []
       tags:
       - comments
   /api/feedback:
@@ -175,6 +184,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/getAllFeedbackResponse'
+      security:
+      - Bearer: []
       tags:
       - feedback
     post:
@@ -183,6 +194,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/createFeedbackResponse'
+      security:
+      - Bearer: []
       tags:
       - feedback
   /api/feedback/:id:
@@ -193,7 +206,9 @@ paths:
         "200":
           $ref: '#/responses/okResponse'
         "404":
-          $ref: '#/responses/notFoundResponse'
+          $ref: '#/responses/errorResponse'
+      security:
+      - Bearer: []
       tags:
       - feedback
     get:
@@ -203,7 +218,9 @@ paths:
         "200":
           $ref: '#/responses/getFeedbackByIdResponse'
         "404":
-          $ref: '#/responses/notFoundResponse'
+          $ref: '#/responses/errorResponse'
+      security:
+      - Bearer: []
       tags:
       - feedback
     put:
@@ -213,9 +230,11 @@ paths:
         "200":
           $ref: '#/responses/okResponse'
         "400":
-          $ref: '#/responses/badRequestResponse'
+          $ref: '#/responses/errorResponse'
         "404":
-          $ref: '#/responses/notFoundResponse'
+          $ref: '#/responses/errorResponse'
+      security:
+      - Bearer: []
       tags:
       - feedback
   /api/users/:id:
@@ -227,6 +246,8 @@ paths:
           $ref: '#/responses/getUserResponse'
         "404":
           $ref: '#/responses/errorResponse'
+      security:
+      - Bearer: []
       tags:
       - users
   /api/users/me:
@@ -236,6 +257,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/getUserResponse'
+      security:
+      - Bearer: []
       tags:
       - users
   /api/votes:
@@ -245,6 +268,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/getAllVotesResponse'
+      security:
+      - Bearer: []
       tags:
       - votes
     post:
@@ -253,6 +278,8 @@ paths:
       responses:
         "200":
           $ref: '#/responses/createVoteResponse'
+      security:
+      - Bearer: []
       tags:
       - votes
   /api/votes/:id:
@@ -264,19 +291,13 @@ paths:
           $ref: '#/responses/okResponse'
         "404":
           $ref: '#/responses/errorResponse'
+      security:
+      - Bearer: []
       tags:
       - votes
 produces:
 - application/json
 responses:
-  badRequestResponse:
-    description: Bad request response
-    schema:
-      properties:
-        message:
-          type: string
-          x-go-name: Message
-      type: object
   createCommentResponse:
     description: Create comment response
     schema:
@@ -331,7 +352,7 @@ responses:
     description: OK response
     schema:
       items:
-        $ref: '#/definitions/Vote'
+        $ref: '#/definitions/Feedback'
       type: array
   getFeedbackByIdResponse:
     description: Returns product feedback by id
@@ -341,14 +362,6 @@ responses:
     description: OK response
     schema:
       $ref: '#/definitions/User'
-  notFoundResponse:
-    description: Not found feedback response
-    schema:
-      properties:
-        message:
-          type: string
-          x-go-name: Message
-      type: object
   okResponse:
     description: OK response
     schema:
@@ -369,4 +382,9 @@ responses:
       type: object
 schemes:
 - http
+securityDefinitions:
+  Bearer:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

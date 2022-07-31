@@ -35,6 +35,10 @@ func NewUserHandler(
 
 // swagger:route GET /api/users/me users getMe
 // Returs user data
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: getUserResponse
 
@@ -67,6 +71,10 @@ func (h *userHandler) getMe(c *gin.Context) {
 
 // swagger:route GET /api/users/:id users getUserById
 // Returs user data by id
+//
+// security:
+// - Bearer:
+//
 // responses:
 //	200: getUserResponse
 //	404: errorResponse

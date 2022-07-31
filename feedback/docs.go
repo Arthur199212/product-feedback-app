@@ -22,24 +22,11 @@ type okResponseResponseWrapper struct {
 	}
 }
 
-// Not found feedback response
-// swagger:response notFoundResponse
-type notFoundResponse struct {
-	// notFoundResponse
-	// in: body
-	Body struct {
-		Message string `json:"message"`
-	}
-}
-
-// Bad request response
-// swagger:response badRequestResponse
-type badRequestResponse struct {
-	// badRequestResponse
-	// in: body
-	Body struct {
-		Message string `json:"message"`
-	}
+// swagger:response errorResponse
+type errorResponse struct {
+	// Message of the error
+	// in: string
+	Message string `json:"message"`
 }
 
 // Returns all product feedback in the system
