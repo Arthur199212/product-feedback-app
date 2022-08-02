@@ -71,6 +71,10 @@ func (h *voteHandler) getAllVotes(c *gin.Context) {
 }
 
 type createVoteInput struct {
+	// The id of the feedback vote is related to
+	//
+	// required: true
+	// min: 1
 	FeedbackId int `json:"feedbackId" validate:"required,gt=0"`
 }
 

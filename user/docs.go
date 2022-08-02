@@ -17,3 +17,11 @@ type errorResponse struct {
 		Message string `json:"message"`
 	}
 }
+
+// swagger:parameters getUserById
+type userIdParam struct {
+	// The id of the user for which the operation relates
+	// in: path
+	// required: true
+	Id int `json:"id"`
+}

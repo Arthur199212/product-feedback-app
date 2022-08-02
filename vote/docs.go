@@ -40,3 +40,27 @@ type errorResponse struct {
 	}
 }
 
+// swagger:parameters deleteVote
+type voteIdParam struct {
+	// The id of the vote for which the operation relates
+	// in: path
+	// required: true
+	Id int `json:"id"`
+}
+
+// swagger:parameters createVote
+type createVoteInputParamsWrapper struct {
+	// Vote data structure to create vote
+	// in: body
+	// required: true
+	Body createVoteInput
+}
+
+// swagger:parameters getAllVotes
+type feedbackIdQueryParam struct {
+	// Feedback id can be used to filter out
+	// votes by feedback they relate to.
+	// in: query
+	// required: false
+	FeedbackId string `json:"feedbackId"`
+}

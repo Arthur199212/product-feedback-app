@@ -34,10 +34,28 @@ func NewFeedbackHandler(
 }
 
 type createFeedbackInput struct {
-	Title    string  `json:"title" validate:"required,min=5,max=50"`
-	Body     string  `json:"body" validate:"required,min=10,max=1000"`
-	Category string  `json:"category" validate:"required,oneof=ui ux enchancement bug feature"`
-	Status   *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
+	// Title of the feedback
+	//
+	// required: true
+	// min length: 5
+	// max length: 50
+	Title string `json:"title" validate:"required,min=5,max=50"`
+	// Body of the feedback
+	//
+	// required: true
+	// min length: 10
+	// max length: 1000
+	Body string `json:"body" validate:"required,min=10,max=1000"`
+	// Category of the feedback
+	//
+	// required: true
+	// Possible categories: 'ui', 'ux', 'enchancement', 'bug', 'feature'
+	Category string `json:"category" validate:"required,oneof=ui ux enchancement bug feature"`
+	// Status of the feedback
+	//
+	// required: false
+	// Possible statuses: 'idea', 'defined', 'in-progress', 'done'
+	Status *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
 }
 
 // swagger:route POST /api/feedback feedback createFeedback
@@ -219,10 +237,28 @@ func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
 }
 
 type updateFeedbackInput struct {
-	Title    *string `json:"title" validate:"omitempty,min=5,max=50"`
-	Body     *string `json:"body" validate:"omitempty,min=10,max=1000"`
+	// Title of the feedback
+	//
+	// required: false
+	// min length: 5
+	// max length: 50
+	Title *string `json:"title" validate:"omitempty,min=5,max=50"`
+	// Body of the feedback
+	//
+	// required: false
+	// min length: 10
+	// max length: 1000
+	Body *string `json:"body" validate:"omitempty,min=10,max=1000"`
+	// Category of the feedback
+	//
+	// required: false
+	// Possible categories: 'ui', 'ux', 'enchancement', 'bug', 'feature'
 	Category *string `json:"category" validate:"omitempty,oneof=ui ux enchancement bug feature"`
-	Status   *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
+	// Status of the feedback
+	//
+	// required: false
+	// Possible statuses: 'idea', 'defined', 'in-progress', 'done'
+	Status *string `json:"status" validate:"omitempty,oneof=idea defined in-progress done"`
 }
 
 // swagger:route PUT /api/feedback/:id feedback updateFeedback

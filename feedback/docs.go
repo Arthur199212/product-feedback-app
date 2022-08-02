@@ -44,3 +44,27 @@ type getFeedbackByIdResponseWrapper struct {
 	// in: body
 	Body Feedback
 }
+
+// swagger:parameters createFeedback
+type createFeedbackInputParamsWrapper struct {
+	// Feedback data structure to create feedback
+	// in: body
+	// required: true
+	Body createFeedbackInput
+}
+
+// swagger:parameters updateFeedback
+type updateFeedbackInputParamsWrapper struct {
+	// Feedback data structure to update feedback
+	// in: body
+	// required: true
+	Body updateFeedbackInput
+}
+
+// swagger:parameters deleteFeedback getFeedbackById updateFeedback
+type feedbackIdParamsWrapper struct {
+	// The id of the feedback for which the operation relates
+	// in: path
+	// required: true
+	Id int `json:"id"`
+}

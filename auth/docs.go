@@ -26,3 +26,20 @@ type refreshAccessTokenResponseWrapper struct {
 		AccessToken string `json:"accessToken"`
 	}
 }
+
+// swagger:parameters loginWithGitHub
+type codeQueryParam struct {
+	// Code to handle login with GitHub.
+	// GitHub itself provides it.
+	// in: query
+	// required: true
+	Code string `json:"code"`
+}
+
+// swagger:parameters refreshAccessToken
+type refreshAccessTokenParamsWrapper struct {
+	// Refresh token is used to get access token
+	// in: body
+	// required: true
+	Body refreshAccessTokenInput
+}

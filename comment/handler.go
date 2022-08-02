@@ -71,8 +71,17 @@ func (h *commentHandler) getAllComments(c *gin.Context) {
 }
 
 type createCommentInput struct {
-	Body       string `json:"body" validate:"required,min=5,max=255"`
-	FeedbackId int    `json:"feedbackId" validate:"required,gt=0"`
+	// Body of the comment
+	//
+	// required: true
+	// min length: 5
+	// max length: 255
+	Body string `json:"body" validate:"required,min=5,max=255"`
+	// Id of the feedback this comment is related to
+	//
+	// required: true
+	// min: 1
+	FeedbackId int `json:"feedbackId" validate:"required,gt=0"`
 }
 
 // swagger:route POST /api/comments comments createComment

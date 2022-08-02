@@ -2,6 +2,7 @@
 export
 
 MIGRATE_CMD=migrate -path ./migrations -database ${DATABASE_URL}
+GOFILES_WITHOUT_VENDOR=$(shell find . -type f -name '*.go' -not -path "./vendor/*")
 
 run:
 	go run cmd/main.go
@@ -25,10 +26,12 @@ migrate_down:
 	${MIGRATE_CMD} down
 
 lint:
-	gofmt -d .
+	@if [ -n "$$(gofmt -l ${GOFILES_WITHOUT_VENDOR})" ]; \
+		then echo 'Forgot to run "make lint_fix"?' && exit 1; \
+	fi
 
 lint_fix:
-	gofmt -w .
+	@gofmt -l -w ${GOFILES_WITHOUT_VENDOR}
 
 check_swagger_install:
 	which swagger || go get -u github.com/go-swagger/go-swagger/cmd/swagger

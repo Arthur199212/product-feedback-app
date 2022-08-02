@@ -156,6 +156,101 @@ definitions:
         x-go-name: UserId
     type: object
     x-go-package: product-feedback/vote
+  createCommentInput:
+    properties:
+      body:
+        description: Body of the comment
+        maxLength: 255
+        minLength: 5
+        type: string
+        x-go-name: Body
+      feedbackId:
+        description: Id of the feedback this comment is related to
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: FeedbackId
+    required:
+    - body
+    - feedbackId
+    type: object
+    x-go-package: product-feedback/comment
+  createFeedbackInput:
+    properties:
+      body:
+        description: Body of the feedback
+        maxLength: 1000
+        minLength: 10
+        type: string
+        x-go-name: Body
+      category:
+        description: Category of the feedback
+        type: string
+        x-go-name: Category
+      status:
+        description: Status of the feedback
+        type: string
+        x-go-name: Status
+      title:
+        description: Title of the feedback
+        maxLength: 50
+        minLength: 5
+        type: string
+        x-go-name: Title
+    required:
+    - title
+    - body
+    - category
+    type: object
+    x-go-package: product-feedback/feedback
+  createVoteInput:
+    properties:
+      feedbackId:
+        description: The id of the feedback vote is related to
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: FeedbackId
+    required:
+    - feedbackId
+    type: object
+    x-go-package: product-feedback/vote
+  refreshAccessTokenInput:
+    properties:
+      refreshToken:
+        description: |-
+          Refresh token in format of JWT is used to get
+          access token in exchange
+        type: string
+        x-go-name: RefreshToken
+    required:
+    - refreshToken
+    type: object
+    x-go-package: product-feedback/auth
+  updateFeedbackInput:
+    properties:
+      body:
+        description: Body of the feedback
+        maxLength: 1000
+        minLength: 10
+        type: string
+        x-go-name: Body
+      category:
+        description: Category of the feedback
+        type: string
+        x-go-name: Category
+      status:
+        description: Status of the feedback
+        type: string
+        x-go-name: Status
+      title:
+        description: Title of the feedback
+        maxLength: 50
+        minLength: 5
+        type: string
+        x-go-name: Title
+    type: object
+    x-go-package: product-feedback/feedback
 info:
   description: Documentation Product Feedback API
   title: Product Feedback API
@@ -165,6 +260,15 @@ paths:
     get:
       description: Redirects to GitHub authentication
       operationId: loginWithGitHub
+      parameters:
+      - description: |-
+          Code to handle login with GitHub.
+          GitHub itself provides it.
+        in: query
+        name: code
+        required: true
+        type: string
+        x-go-name: Code
       responses:
         "302":
           $ref: '#/responses/foundResponse'
@@ -174,17 +278,31 @@ paths:
     get:
       description: Redirects to GitHub authentication
       operationId: loginWithGitHub
+      parameters:
+      - description: |-
+          Code to handle login with GitHub.
+          GitHub itself provides it.
+        in: query
+        name: code
+        required: true
+        type: string
+        x-go-name: Code
       responses:
         "302":
           $ref: '#/responses/foundResponse'
-        "403":
-          $ref: '#/responses/errorResponse'
       tags:
       - auth
   /api/auth/refresh-token:
     post:
       description: Redirects to GitHub authentication
       operationId: refreshAccessToken
+      parameters:
+      - description: Refresh token is used to get access token
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/refreshAccessTokenInput'
       responses:
         "200":
           $ref: '#/responses/refreshAccessTokenResponse'
@@ -196,6 +314,14 @@ paths:
     get:
       description: Returns a list of all comments in the system
       operationId: getAllComments
+      parameters:
+      - description: |-
+          Feedback id can be used to filter out
+          comments by feedback they relate to.
+        in: query
+        name: feedbackId
+        type: string
+        x-go-name: FeedbackId
       responses:
         "200":
           $ref: '#/responses/getAllCommentsResponse'
@@ -206,6 +332,13 @@ paths:
     post:
       description: Creates a comment
       operationId: createComment
+      parameters:
+      - description: Comment data structure to create comment
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/createCommentInput'
       responses:
         "200":
           $ref: '#/responses/createCommentResponse'
@@ -217,6 +350,13 @@ paths:
     get:
       description: Returns comment by id
       operationId: getCommentById
+      parameters:
+      - description: The id of the commnet for which the operation relates
+        format: int64
+        in: path
+        name: Id
+        required: true
+        type: integer
       responses:
         "200":
           $ref: '#/responses/okResponse'
@@ -240,6 +380,13 @@ paths:
     post:
       description: Create product feedback
       operationId: createFeedback
+      parameters:
+      - description: Feedback data structure to create feedback
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/createFeedbackInput'
       responses:
         "200":
           $ref: '#/responses/createFeedbackResponse'
@@ -251,6 +398,14 @@ paths:
     delete:
       description: Delete product feedback
       operationId: deleteFeedback
+      parameters:
+      - description: The id of the feedback for which the operation relates
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
       responses:
         "200":
           $ref: '#/responses/okResponse'
@@ -263,6 +418,14 @@ paths:
     get:
       description: Returns product feedback by id
       operationId: getFeedbackById
+      parameters:
+      - description: The id of the feedback for which the operation relates
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
       responses:
         "200":
           $ref: '#/responses/getFeedbackByIdResponse'
@@ -275,6 +438,20 @@ paths:
     put:
       description: Returns product feedback by id
       operationId: updateFeedback
+      parameters:
+      - description: Feedback data structure to update feedback
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/updateFeedbackInput'
+      - description: The id of the feedback for which the operation relates
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
       responses:
         "200":
           $ref: '#/responses/okResponse'
@@ -290,6 +467,14 @@ paths:
     get:
       description: Returs user data by id
       operationId: getUserById
+      parameters:
+      - description: The id of the user for which the operation relates
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
       responses:
         "200":
           $ref: '#/responses/getUserResponse'
@@ -314,6 +499,14 @@ paths:
     get:
       description: Returns a list of votes in the system
       operationId: getAllVotes
+      parameters:
+      - description: |-
+          Feedback id can be used to filter out
+          votes by feedback they relate to.
+        in: query
+        name: feedbackId
+        type: string
+        x-go-name: FeedbackId
       responses:
         "200":
           $ref: '#/responses/getAllVotesResponse'
@@ -324,6 +517,13 @@ paths:
     post:
       description: Creates a vote
       operationId: createVote
+      parameters:
+      - description: Vote data structure to create vote
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/createVoteInput'
       responses:
         "200":
           $ref: '#/responses/createVoteResponse'
@@ -335,6 +535,14 @@ paths:
     delete:
       description: Deletes a vote
       operationId: deleteVote
+      parameters:
+      - description: The id of the vote for which the operation relates
+        format: int64
+        in: path
+        name: id
+        required: true
+        type: integer
+        x-go-name: Id
       responses:
         "200":
           $ref: '#/responses/okResponse'

@@ -39,3 +39,28 @@ type errorResponse struct {
 		Message string `json:"message"`
 	}
 }
+
+// swagger:parameters getAllComments
+type feedbackIdQueryParam struct {
+	// Feedback id can be used to filter out
+	// comments by feedback they relate to.
+	// in: query
+	// required: false
+	FeedbackId string `json:"feedbackId"`
+}
+
+// swagger:parameters getCommentById
+type commentIdParamsWrapper struct {
+	// The id of the commnet for which the operation relates
+	// in: path
+	// required: true
+	Id int
+}
+
+// swagger:parameters createComment
+type createCommentInputParamsWrapper struct {
+	// Comment data structure to create comment
+	// in: body
+	// required: true
+	Body createCommentInput
+}

@@ -108,6 +108,10 @@ func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
 }
 
 type refreshAccessTokenInput struct {
+	// Refresh token in format of JWT is used to get
+	// access token in exchange
+	//
+	// required: true
 	RefreshToken string `json:"refreshToken" validate:"required,jwt"`
 }
 
