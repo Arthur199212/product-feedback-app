@@ -13,6 +13,9 @@ clean:
 build: clean
 	go build -v -o bin/main ./cmd
 
+test:
+	go test -v ./...
+
 up:
 	docker compose up -d
 
