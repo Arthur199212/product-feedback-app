@@ -31,11 +31,12 @@
 - [x] Create, Read, Delete a Votes
 - [x] Deployed (Heroku), [endpoint](https://go-product-feedback.herokuapp.com/)
 - [x] Add [Swagger documentation](https://go-product-feedback.herokuapp.com/docs)
+- [x] Setup CICD
 
 ## Todo
 
-- [ ] Setup CICD
 - [ ] Add unit-tests
 - [ ] Add api-tests
 - [ ] Update, Delete operations with Comments
 - [ ] Update, Delete operations with Users
+- [ ] Use Websocket to notify users about updates of feedback, comments & votes
