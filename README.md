@@ -1,5 +1,7 @@
 # Product Feedback App Backend
 
+[![CI](https://github.com/Arthur199212/product-feedback-app/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Arthur199212/product-feedback-app/actions/workflows/ci.yml)
+
 ## Links
 
 - [Swagger](https://go-product-feedback.herokuapp.com/docs)
