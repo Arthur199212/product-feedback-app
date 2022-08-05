@@ -1,5 +1,7 @@
 package comment
 
+import "product-feedback/notifier"
+
 type CommentService interface {
 	Create(userId int, f createCommentInput) (int, error)
 	GetAll(feedbackId *int) ([]Comment, error)
@@ -7,15 +9,33 @@ type CommentService interface {
 }
 
 type commentService struct {
-	repo CommentRepository
+	repo     CommentRepository
+	notifier *notifier.NotifierService
 }
 
-func NewCommentService(repo CommentRepository) CommentService {
-	return &commentService{repo}
+func NewCommentService(
+	repo CommentRepository,
+	notifier *notifier.NotifierService,
+) CommentService {
+	return &commentService{
+		repo:     repo,
+		notifier: notifier,
+	}
 }
 
 func (s *commentService) Create(userId int, f createCommentInput) (int, error) {
-	return s.repo.Create(userId, f)
+	id, err := s.repo.Create(userId, f)
+	if err != nil {
+		return id, err
+	}
+
+	go s.notifier.BroadcastMessage(
+		notifier.CreateEvent,
+		notifier.SubjectComment,
+		id,
+	)
+
+	return id, nil
 }
 
 func (s *commentService) GetAll(feedbackId *int) ([]Comment, error) {

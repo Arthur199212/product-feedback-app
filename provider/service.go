@@ -24,10 +24,10 @@ func NewService(r *Repository) *Service {
 
 	return &Service{
 		Auth:     auth.NewAuthService(userService),
-		Comment:  comment.NewCommentService(r.Comment),
+		Comment:  comment.NewCommentService(r.Comment, &notifierService),
 		Feedback: feedback.NewFeedbackService(r.Feedback, &notifierService),
 		User:     userService,
-		Vote:     vote.NewVoteService(r.Vote),
+		Vote:     vote.NewVoteService(r.Vote, &notifierService),
 		Notifier: notifierService,
 	}
 }

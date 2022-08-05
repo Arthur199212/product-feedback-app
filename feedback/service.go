@@ -25,7 +25,19 @@ func NewFeedbackService(
 }
 
 func (s *feedbackService) Create(userId int, f createFeedbackInput) (int, error) {
-	return s.repo.Create(userId, f)
+	id, err := s.repo.Create(userId, f)
+	if err != nil {
+		return id, err
+	}
+
+	// notify about feedback create
+	go s.notifier.BroadcastMessage(
+		notifier.DeleteEvent,
+		notifier.SubjectFeedback,
+		id,
+	)
+
+	return id, nil
 }
 
 func (s *feedbackService) Delete(userId, feedbackId int) error {
@@ -35,7 +47,18 @@ func (s *feedbackService) Delete(userId, feedbackId int) error {
 		return err
 	}
 
-	return s.repo.Delete(userId, feedbackId)
+	if err := s.repo.Delete(userId, feedbackId); err != nil {
+		return err
+	}
+
+	// notify about feedback delete
+	go s.notifier.BroadcastMessage(
+		notifier.DeleteEvent,
+		notifier.SubjectFeedback,
+		feedbackId,
+	)
+
+	return nil
 }
 
 func (s *feedbackService) GetAll() ([]Feedback, error) {
@@ -51,8 +74,7 @@ func (s *feedbackService) Update(
 	feedbackId int,
 	f updateFeedbackInput,
 ) error {
-	err := s.repo.Update(userId, feedbackId, f)
-	if err != nil {
+	if err := s.repo.Update(userId, feedbackId, f); err != nil {
 		return err
 	}
 

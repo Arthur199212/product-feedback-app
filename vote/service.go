@@ -3,6 +3,7 @@ package vote
 import (
 	"database/sql"
 	"errors"
+	"product-feedback/notifier"
 )
 
 type VoteService interface {
@@ -12,11 +13,18 @@ type VoteService interface {
 }
 
 type voteService struct {
-	repo VoteRepository
+	repo     VoteRepository
+	notifier *notifier.NotifierService
 }
 
-func NewVoteService(repo VoteRepository) VoteService {
-	return &voteService{repo}
+func NewVoteService(
+	repo VoteRepository,
+	notifier *notifier.NotifierService,
+) VoteService {
+	return &voteService{
+		repo:     repo,
+		notifier: notifier,
+	}
 }
 
 var ErrVoteAlreadyExists = errors.New("vote already exists")
@@ -32,11 +40,32 @@ func (s *voteService) Create(userId int, v createVoteInput) (int, error) {
 		return 0, ErrVoteAlreadyExists
 	}
 
-	return s.repo.Create(userId, v)
+	id, err := s.repo.Create(userId, v)
+	if err != nil {
+		return id, err
+	}
+
+	go s.notifier.BroadcastMessage(
+		notifier.CreateEvent,
+		notifier.SubjectVote,
+		id,
+	)
+
+	return id, nil
 }
 
 func (s *voteService) Delete(userId, voteId int) error {
-	return s.repo.Delete(userId, voteId)
+	if err := s.repo.Delete(userId, voteId); err != nil {
+		return err
+	}
+
+	go s.notifier.BroadcastMessage(
+		notifier.DeleteEvent,
+		notifier.SubjectVote,
+		voteId,
+	)
+
+	return nil
 }
 
 func (s *voteService) GetAll(feedbackId *int) ([]Vote, error) {

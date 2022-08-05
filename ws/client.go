@@ -25,7 +25,7 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	l *logrus.Logger
+	l    *logrus.Logger
 	conn *websocket.Conn
 	// Buffered channel of outbound messages
 	Send chan []byte
