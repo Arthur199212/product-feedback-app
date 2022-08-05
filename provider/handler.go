@@ -27,6 +27,7 @@ import (
 	"product-feedback/comment"
 	"product-feedback/feedback"
 	"product-feedback/middleware"
+	"product-feedback/notifier"
 	"product-feedback/user"
 	"product-feedback/validation"
 	"product-feedback/vote"
@@ -47,6 +48,7 @@ type handler struct {
 	Feedback feedback.FeedbackHandler
 	User     user.UserHandler
 	Vote     vote.VoteHandler
+	Notifier notifier.NotifierHandler
 }
 
 func NewHandler(
@@ -60,6 +62,7 @@ func NewHandler(
 		Feedback: feedback.NewFeedbackHandler(l, v, s.Feedback),
 		User:     user.NewUserHandler(l, v, s.User),
 		Vote:     vote.NewVoteHandler(l, v, s.Vote),
+		Notifier: notifier.NewNotifierHandler(l, &s.Notifier),
 	}
 }
 
@@ -85,6 +88,7 @@ func (h *handler) InitRoutes() *gin.Engine {
 	h.Feedback.AddRoutes(api)
 	h.User.AddRoutes(api)
 	h.Vote.AddRoutes(api)
+	h.Notifier.AddRoutes(api)
 
 	return router
 }

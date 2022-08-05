@@ -1,5 +1,9 @@
 package feedback
 
+import (
+	"product-feedback/notifier"
+)
+
 type FeedbackService interface {
 	Create(userId int, f createFeedbackInput) (int, error)
 	Delete(userId, feedbackId int) error
@@ -9,11 +13,15 @@ type FeedbackService interface {
 }
 
 type feedbackService struct {
-	repo FeedbackRepository
+	repo     FeedbackRepository
+	notifier *notifier.NotifierService
 }
 
-func NewFeedbackService(repo FeedbackRepository) FeedbackService {
-	return &feedbackService{repo}
+func NewFeedbackService(
+	repo FeedbackRepository,
+	hub *notifier.NotifierService,
+) FeedbackService {
+	return &feedbackService{repo: repo, notifier: hub}
 }
 
 func (s *feedbackService) Create(userId int, f createFeedbackInput) (int, error) {
@@ -43,5 +51,17 @@ func (s *feedbackService) Update(
 	feedbackId int,
 	f updateFeedbackInput,
 ) error {
-	return s.repo.Update(userId, feedbackId, f)
+	err := s.repo.Update(userId, feedbackId, f)
+	if err != nil {
+		return err
+	}
+
+	// notify about feedback update
+	go s.notifier.BroadcastMessage(
+		notifier.UpdateEvent,
+		notifier.SubjectFeedback,
+		feedbackId,
+	)
+
+	return nil
 }
