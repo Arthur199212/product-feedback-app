@@ -16,6 +16,7 @@
 - [logrus](https://github.com/sirupsen/logrus)
 - [Heroku](https://www.heroku.com/)
 - [Swagger](https://goswagger.io/)
+- Websocket with [gorilla/websocket](https://github.com/gorilla/websocket)
 
 ## How to Start
 
