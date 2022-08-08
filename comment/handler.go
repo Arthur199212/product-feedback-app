@@ -82,6 +82,11 @@ type createCommentInput struct {
 	// required: true
 	// min: 1
 	FeedbackId int `json:"feedbackId" validate:"required,gt=0"`
+	// Id of the comment that this comment relates to
+	//
+	// required: false
+	// min: 1
+	ParentId *int `json:"parentId" db:"parent_id" validate:"omitempty,gt=0"`
 }
 
 // swagger:route POST /api/comments comments createComment
@@ -147,7 +152,7 @@ func (h *commentHandler) deleteComment(c *gin.Context) {
 // - Bearer:
 //
 // responses:
-//	200: okResponse
+//	200: getCommentByIdResponse
 //	404: errorResponse
 
 func (h *commentHandler) getCommentById(c *gin.Context) {

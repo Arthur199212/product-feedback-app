@@ -1,6 +1,9 @@
 package comment
 
-import "product-feedback/notifier"
+import (
+	"errors"
+	"product-feedback/notifier"
+)
 
 type CommentService interface {
 	Create(userId int, f createCommentInput) (int, error)
@@ -24,6 +27,17 @@ func NewCommentService(
 }
 
 func (s *commentService) Create(userId int, f createCommentInput) (int, error) {
+	// check if parent comment has the same feedbackId
+	if f.ParentId != nil {
+		comment, err := s.repo.GetById(*f.ParentId)
+		if err != nil {
+			return 0, err
+		}
+		if comment.FeedbackId != f.FeedbackId {
+			return 0, errors.New("feedbackId of a parent comment and a new comment are not the same")
+		}
+	}
+
 	id, err := s.repo.Create(userId, f)
 	if err != nil {
 		return id, err

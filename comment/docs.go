@@ -19,6 +19,14 @@ type getAllCommentsResponseWrapper struct {
 	Body []Comment
 }
 
+// Returns a comment with the specified Id
+// swagger:response getCommentByIdResponse
+type getCommentByIdResponseWrapper struct {
+	// getCommentByIdResponse
+	// in: body
+	Body Comment
+}
+
 // OK response
 // swagger:response okResponse
 type okResponse struct {

@@ -22,9 +22,16 @@ definitions:
         x-go-name: FeedbackId
       id:
         description: Id of the comment
+        format: int64
         minimum: 1
-        type: string
+        type: integer
         x-go-name: Id
+      parentId:
+        description: Id of the comment that this comment relates to
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: ParentId
       updatedAt:
         description: Time comment was updated at
         type: string
@@ -170,6 +177,12 @@ definitions:
         minimum: 1
         type: integer
         x-go-name: FeedbackId
+      parentId:
+        description: Id of the comment that this comment relates to
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: ParentId
     required:
     - body
     - feedbackId
@@ -359,7 +372,7 @@ paths:
         type: integer
       responses:
         "200":
-          $ref: '#/responses/okResponse'
+          $ref: '#/responses/getCommentByIdResponse'
         "404":
           $ref: '#/responses/errorResponse'
       security:
@@ -611,6 +624,10 @@ responses:
       items:
         $ref: '#/definitions/Vote'
       type: array
+  getCommentByIdResponse:
+    description: Returns a comment with the specified Id
+    schema:
+      $ref: '#/definitions/Comment'
   getFeedbackByIdResponse:
     description: Returns product feedback by id
     schema:

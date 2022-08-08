@@ -27,8 +27,8 @@ const (
 
 func (r *commentRepository) Create(userId int, f createCommentInput) (int, error) {
 	query := fmt.Sprintf(`
-		INSERT INTO %s (body, feedback_id, user_id, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5) RETURNING id
+		INSERT INTO %s (body, feedback_id, user_id, parent_id, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6) RETURNING id
 	`, commentsTable)
 	var id int
 	currentTime := time.Now().UTC()
@@ -38,6 +38,7 @@ func (r *commentRepository) Create(userId int, f createCommentInput) (int, error
 		f.Body,
 		f.FeedbackId,
 		userId,
+		f.ParentId,
 		currentTime,
 		currentTime,
 	).Scan(&id)
@@ -66,7 +67,7 @@ func (r *commentRepository) GetAll(feedbackId *int) ([]Comment, error) {
 
 	// ORDER BY id ASC - shows earlier created first
 	query := fmt.Sprintf(`
-		SELECT id, body, feedback_id, user_id, created_at, updated_at FROM %s
+		SELECT id, body, feedback_id, user_id, parent_id, created_at, updated_at FROM %s
 		%s
 		ORDER BY id ASC
 	`, commentsTable, whereClauseQuery)
@@ -85,6 +86,7 @@ func (r *commentRepository) GetAll(feedbackId *int) ([]Comment, error) {
 			&c.Body,
 			&c.FeedbackId,
 			&c.UserId,
+			&c.ParentId,
 			&c.CreatedAt,
 			&c.UpdatedAt,
 		)
@@ -99,7 +101,7 @@ func (r *commentRepository) GetAll(feedbackId *int) ([]Comment, error) {
 
 func (r *commentRepository) GetById(commentId int) (Comment, error) {
 	query := fmt.Sprintf(`
-		SELECT id, body, feedback_id, user_id, created_at, updated_at FROM %s
+		SELECT id, body, feedback_id, user_id, parent_id, created_at, updated_at FROM %s
 		WHERE id=$1
 	`, commentsTable)
 
@@ -109,6 +111,7 @@ func (r *commentRepository) GetById(commentId int) (Comment, error) {
 		&c.Body,
 		&c.FeedbackId,
 		&c.UserId,
+		&c.ParentId,
 		&c.CreatedAt,
 		&c.UpdatedAt,
 	)

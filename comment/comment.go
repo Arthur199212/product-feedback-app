@@ -5,7 +5,7 @@ type Comment struct {
 	// Id of the comment
 	//
 	// min: 1
-	Id string `json:"id" db:"id"`
+	Id int `json:"id" db:"id"`
 	// Body of the comment
 	//
 	// min length: 5
@@ -19,6 +19,10 @@ type Comment struct {
 	//
 	// min: 1
 	UserId int `json:"userId" db:"user_id"`
+	// Id of the comment that this comment relates to
+	//
+	// min: 1
+	ParentId *int `json:"parentId" db:"parent_id"`
 	// Time comment was created at
 	CreatedAt string `json:"createdAt" db:"created_at"`
 	// Time comment was updated at
