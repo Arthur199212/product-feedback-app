@@ -50,7 +50,7 @@ type createFeedbackInputParamsWrapper struct {
 	// Feedback data structure to create feedback
 	// in: body
 	// required: true
-	Body createFeedbackInput
+	Body CreateFeedbackInput
 }
 
 // swagger:parameters updateFeedback
@@ -58,7 +58,7 @@ type updateFeedbackInputParamsWrapper struct {
 	// Feedback data structure to update feedback
 	// in: body
 	// required: true
-	Body updateFeedbackInput
+	Body UpdateFeedbackInput
 }
 
 // swagger:parameters deleteFeedback getFeedbackById updateFeedback

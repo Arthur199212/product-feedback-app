@@ -78,6 +78,9 @@ github.com/goccy/go-json/internal/runtime
 # github.com/golang-jwt/jwt v3.2.2+incompatible
 ## explicit
 github.com/golang-jwt/jwt
+# github.com/golang/mock v1.6.0
+## explicit; go 1.11
+github.com/golang/mock/gomock
 # github.com/google/go-cmp v0.5.8
 ## explicit; go 1.13
 # github.com/google/uuid v1.1.2
@@ -133,6 +136,7 @@ github.com/pelletier/go-toml/v2/internal/tracker
 # github.com/sirupsen/logrus v1.9.0
 ## explicit; go 1.13
 github.com/sirupsen/logrus
+github.com/sirupsen/logrus/hooks/test
 # github.com/ugorji/go/codec v1.2.7
 ## explicit; go 1.11
 github.com/ugorji/go/codec

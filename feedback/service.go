@@ -4,12 +4,14 @@ import (
 	"product-feedback/notifier"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/service.go
+
 type FeedbackService interface {
-	Create(userId int, f createFeedbackInput) (int, error)
+	Create(userId int, f CreateFeedbackInput) (int, error)
 	Delete(userId, feedbackId int) error
 	GetAll() ([]Feedback, error)
 	GetById(userId, feedbackId int) (Feedback, error)
-	Update(userId, feedbackId int, f updateFeedbackInput) error
+	Update(userId, feedbackId int, f UpdateFeedbackInput) error
 }
 
 type feedbackService struct {
@@ -24,7 +26,7 @@ func NewFeedbackService(
 	return &feedbackService{repo: repo, notifier: hub}
 }
 
-func (s *feedbackService) Create(userId int, f createFeedbackInput) (int, error) {
+func (s *feedbackService) Create(userId int, f CreateFeedbackInput) (int, error) {
 	id, err := s.repo.Create(userId, f)
 	if err != nil {
 		return id, err
@@ -72,7 +74,7 @@ func (s *feedbackService) GetById(userId, feedbackId int) (Feedback, error) {
 func (s *feedbackService) Update(
 	userId,
 	feedbackId int,
-	f updateFeedbackInput,
+	f UpdateFeedbackInput,
 ) error {
 	if err := s.repo.Update(userId, feedbackId, f); err != nil {
 		return err

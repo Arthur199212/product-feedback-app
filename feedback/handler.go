@@ -13,6 +13,7 @@ import (
 
 type FeedbackHandler interface {
 	AddRoutes(r *gin.RouterGroup)
+	CreateFeedback(c *gin.Context)
 }
 
 type feedbackHandler struct {
@@ -33,7 +34,7 @@ func NewFeedbackHandler(
 	}
 }
 
-type createFeedbackInput struct {
+type CreateFeedbackInput struct {
 	// Title of the feedback
 	//
 	// required: true
@@ -67,7 +68,7 @@ type createFeedbackInput struct {
 // responses:
 //	200: createFeedbackResponse
 
-func (h *feedbackHandler) createFeedback(c *gin.Context) {
+func (h *feedbackHandler) CreateFeedback(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
 	if err != nil {
 		h.l.Error(err)
@@ -77,7 +78,7 @@ func (h *feedbackHandler) createFeedback(c *gin.Context) {
 		return
 	}
 
-	var input createFeedbackInput
+	var input CreateFeedbackInput
 	if err := c.BindJSON(&input); err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
@@ -236,7 +237,7 @@ func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
 	c.JSON(http.StatusOK, feedback)
 }
 
-type updateFeedbackInput struct {
+type UpdateFeedbackInput struct {
 	// Title of the feedback
 	//
 	// required: false
@@ -291,7 +292,7 @@ func (h *feedbackHandler) updateFeedback(c *gin.Context) {
 		return
 	}
 
-	var input updateFeedbackInput
+	var input UpdateFeedbackInput
 	if err := c.BindJSON(&input); err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{

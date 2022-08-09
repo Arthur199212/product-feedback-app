@@ -10,11 +10,11 @@ import (
 )
 
 type FeedbackRepository interface {
-	Create(userId int, f createFeedbackInput) (int, error)
+	Create(userId int, f CreateFeedbackInput) (int, error)
 	Delete(userId, feedbackId int) error
 	GetAll() ([]Feedback, error)
 	GetById(userId, feedbackId int) (Feedback, error)
-	Update(userId, feedbackId int, f updateFeedbackInput) error
+	Update(userId, feedbackId int, f UpdateFeedbackInput) error
 }
 
 type feedbackRepository struct {
@@ -35,7 +35,7 @@ const (
 
 var errNoInputToUpdate = errors.New("no input to update")
 
-func (r *feedbackRepository) Create(userId int, f createFeedbackInput) (int, error) {
+func (r *feedbackRepository) Create(userId int, f CreateFeedbackInput) (int, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO %s (title, body, category, status, user_id, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id
@@ -173,7 +173,7 @@ func (r *feedbackRepository) GetById(userId, feedbackId int) (Feedback, error) {
 func (r *feedbackRepository) Update(
 	userId,
 	feedbackId int,
-	f updateFeedbackInput,
+	f UpdateFeedbackInput,
 ) error {
 	setValues := make([]string, 0, 4)
 	args := make([]interface{}, 0, 4)
