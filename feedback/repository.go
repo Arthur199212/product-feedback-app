@@ -13,7 +13,7 @@ type FeedbackRepository interface {
 	Create(userId int, f CreateFeedbackInput) (int, error)
 	Delete(userId, feedbackId int) error
 	GetAll() ([]Feedback, error)
-	GetById(userId, feedbackId int) (Feedback, error)
+	GetById(feedbackId int) (Feedback, error)
 	Update(userId, feedbackId int, f UpdateFeedbackInput) error
 }
 
@@ -149,14 +149,14 @@ func (r *feedbackRepository) GetAll() ([]Feedback, error) {
 	return fList, nil
 }
 
-func (r *feedbackRepository) GetById(userId, feedbackId int) (Feedback, error) {
+func (r *feedbackRepository) GetById(feedbackId int) (Feedback, error) {
 	var f Feedback
 	query := fmt.Sprintf(`
 		SELECT id, title, body, category, status, user_id, created_at, updated_at FROM %s
-		WHERE user_id=$1 AND id=$2
+		WHERE id=$1
 	`, feedbackTable)
 
-	err := r.db.QueryRow(query, userId, feedbackId).Scan(
+	err := r.db.QueryRow(query, feedbackId).Scan(
 		&f.Id,
 		&f.Title,
 		&f.Body,

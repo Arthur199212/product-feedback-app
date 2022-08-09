@@ -201,15 +201,6 @@ func (h *feedbackHandler) GetAllFeedback(c *gin.Context) {
 //	404: errorResponse
 
 func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
-	userId, err := middleware.GetUserIdFromGinCtx(c)
-	if err != nil {
-		h.l.Error(err)
-		c.AbortWithStatusJSON(http.StatusUnauthorized, map[string]interface{}{
-			"message": "Unauthorized",
-		})
-		return
-	}
-
 	feedbackIdInt, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		h.l.Error(err)
@@ -219,7 +210,7 @@ func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
 		return
 	}
 
-	feedback, err := h.service.GetById(userId, feedbackIdInt)
+	feedback, err := h.service.GetById(feedbackIdInt)
 	switch err {
 	case nil:
 		break

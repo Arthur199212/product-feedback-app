@@ -10,7 +10,7 @@ type FeedbackService interface {
 	Create(userId int, f CreateFeedbackInput) (int, error)
 	Delete(userId, feedbackId int) error
 	GetAll() ([]Feedback, error)
-	GetById(userId, feedbackId int) (Feedback, error)
+	GetById(feedbackId int) (Feedback, error)
 	Update(userId, feedbackId int, f UpdateFeedbackInput) error
 }
 
@@ -44,7 +44,7 @@ func (s *feedbackService) Create(userId int, f CreateFeedbackInput) (int, error)
 
 func (s *feedbackService) Delete(userId, feedbackId int) error {
 	// check if feedback exists
-	_, err := s.GetById(userId, feedbackId)
+	_, err := s.GetById(feedbackId)
 	if err != nil {
 		return err
 	}
@@ -67,8 +67,8 @@ func (s *feedbackService) GetAll() ([]Feedback, error) {
 	return s.repo.GetAll()
 }
 
-func (s *feedbackService) GetById(userId, feedbackId int) (Feedback, error) {
-	return s.repo.GetById(userId, feedbackId)
+func (s *feedbackService) GetById(feedbackId int) (Feedback, error) {
+	return s.repo.GetById(feedbackId)
 }
 
 func (s *feedbackService) Update(

@@ -79,18 +79,18 @@ func (mr *MockFeedbackServiceMockRecorder) GetAll() *gomock.Call {
 }
 
 // GetById mocks base method.
-func (m *MockFeedbackService) GetById(userId, feedbackId int) (feedback.Feedback, error) {
+func (m *MockFeedbackService) GetById(feedbackId int) (feedback.Feedback, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetById", userId, feedbackId)
+	ret := m.ctrl.Call(m, "GetById", feedbackId)
 	ret0, _ := ret[0].(feedback.Feedback)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetById indicates an expected call of GetById.
-func (mr *MockFeedbackServiceMockRecorder) GetById(userId, feedbackId interface{}) *gomock.Call {
+func (mr *MockFeedbackServiceMockRecorder) GetById(feedbackId interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockFeedbackService)(nil).GetById), userId, feedbackId)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetById", reflect.TypeOf((*MockFeedbackService)(nil).GetById), feedbackId)
 }
 
 // Update mocks base method.
