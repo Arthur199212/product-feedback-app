@@ -9,7 +9,7 @@ import (
 func (h *feedbackHandler) AddRoutes(rg *gin.RouterGroup) {
 	feedback := rg.Group("/feedback", middleware.AuthRequired)
 	{
-		feedback.GET("/", h.getAllFeedback)
+		feedback.GET("/", h.GetAllFeedback)
 		feedback.POST("/", h.CreateFeedback)
 		feedback.GET("/:id", h.getFeedbackById)
 		feedback.PUT("/:id", h.updateFeedback)

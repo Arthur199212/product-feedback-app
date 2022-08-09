@@ -15,6 +15,7 @@ type FeedbackHandler interface {
 	AddRoutes(r *gin.RouterGroup)
 	CreateFeedback(c *gin.Context)
 	DeleteFeedback(c *gin.Context)
+	GetAllFeedback(c *gin.Context)
 }
 
 type feedbackHandler struct {
@@ -171,7 +172,7 @@ func (h *feedbackHandler) DeleteFeedback(c *gin.Context) {
 // responses:
 //	200: getAllFeedbackResponse
 
-func (h *feedbackHandler) getAllFeedback(c *gin.Context) {
+func (h *feedbackHandler) GetAllFeedback(c *gin.Context) {
 	// todo: implement options:
 	// filter by: userId, category, status
 	// filter by group: status=idea&status=default&category=ui&category=ux
