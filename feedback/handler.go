@@ -14,6 +14,7 @@ import (
 type FeedbackHandler interface {
 	AddRoutes(r *gin.RouterGroup)
 	CreateFeedback(c *gin.Context)
+	DeleteFeedback(c *gin.Context)
 }
 
 type feedbackHandler struct {
@@ -119,7 +120,7 @@ func (h *feedbackHandler) CreateFeedback(c *gin.Context) {
 //	200: okResponse
 //	404: errorResponse
 
-func (h *feedbackHandler) deleteFeedback(c *gin.Context) {
+func (h *feedbackHandler) DeleteFeedback(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
 	if err != nil {
 		h.l.Error(err)
