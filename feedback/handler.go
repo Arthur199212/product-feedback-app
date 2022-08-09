@@ -16,6 +16,7 @@ type FeedbackHandler interface {
 	CreateFeedback(c *gin.Context)
 	DeleteFeedback(c *gin.Context)
 	GetAllFeedback(c *gin.Context)
+	GetFeedbackById(c *gin.Context)
 }
 
 type feedbackHandler struct {
@@ -200,7 +201,7 @@ func (h *feedbackHandler) GetAllFeedback(c *gin.Context) {
 //	200: getFeedbackByIdResponse
 //	404: errorResponse
 
-func (h *feedbackHandler) getFeedbackById(c *gin.Context) {
+func (h *feedbackHandler) GetFeedbackById(c *gin.Context) {
 	feedbackIdInt, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		h.l.Error(err)

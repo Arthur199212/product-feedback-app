@@ -218,7 +218,7 @@ func Test_DeleteFeedback(t *testing.T) {
 		}
 	})
 
-	t.Run("no id in params", func(t *testing.T) {
+	t.Run("id param is invalid", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
 
@@ -321,6 +321,80 @@ func Test_GetAllFeedback(t *testing.T) {
 			t.Fatalf("expected status code %d, but got %d", http.StatusOK, w.Code)
 		}
 		expectedResponse := `{"message":"Internal server error"}`
+		if w.Body.String() != expectedResponse {
+			t.Fatalf("expected response: %v, but got: %v", expectedResponse, w.Body.String())
+		}
+	})
+}
+
+func Test_GetFeedbackById(t *testing.T) {
+	t.Run("OK", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		feedbackItem := feedback.Feedback{
+			Id:        1,
+			Title:     "title",
+			Body:      "lorem lorem lorem",
+			Category:  "ui",
+			Status:    "idea",
+			UserId:    1,
+			CreatedAt: "2022-08-09 20:29:09.6618642 +0000 UTC",
+			UpdatedAt: "2022-08-09 20:29:09.6618642 +0000 UTC",
+		}
+
+		loggerMock, _ := test.NewNullLogger()
+		v := validation.NewValidation()
+		serviceMock := mock_feedback.NewMockFeedbackService(ctrl)
+		serviceMock.EXPECT().GetById(1).Return(feedbackItem, nil)
+		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+
+		c.Request, _ = http.NewRequest(
+			http.MethodGet,
+			"/api/feedback/1",
+			nil,
+		)
+		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
+
+		handlerMock.GetFeedbackById(c)
+
+		if w.Code != http.StatusOK {
+			t.Fatalf("expected status code %d, but got %d", http.StatusOK, w.Code)
+		}
+		expectedResponse := `{"id":1,"title":"title","body":"lorem lorem lorem","category":"ui","status":"idea","userId":1,"createdAt":"2022-08-09 20:29:09.6618642 +0000 UTC","updatedAt":"2022-08-09 20:29:09.6618642 +0000 UTC"}`
+		if w.Body.String() != expectedResponse {
+			t.Fatalf("expected response: %v, but got: %v", expectedResponse, w.Body.String())
+		}
+	})
+
+	t.Run("id param is invalid", func(t *testing.T) {
+		ctrl := gomock.NewController(t)
+		defer ctrl.Finish()
+
+		loggerMock, _ := test.NewNullLogger()
+		v := validation.NewValidation()
+		serviceMock := mock_feedback.NewMockFeedbackService(ctrl)
+		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
+
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+
+		c.Request, _ = http.NewRequest(
+			http.MethodGet,
+			"/api/feedback/test",
+			nil,
+		)
+		c.Params = append(c.Params, gin.Param{Key: "id", Value: "test"})
+
+		handlerMock.GetFeedbackById(c)
+
+		if w.Code != http.StatusBadRequest {
+			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
+		}
+		expectedResponse := `{"message":"Invalid feedback id"}`
 		if w.Body.String() != expectedResponse {
 			t.Fatalf("expected response: %v, but got: %v", expectedResponse, w.Body.String())
 		}
