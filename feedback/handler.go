@@ -12,7 +12,7 @@ import (
 )
 
 type FeedbackHandler interface {
-	AddRoutes(r *gin.RouterGroup)
+	AddRoutes(r *gin.RouterGroup, authMiddleware gin.HandlerFunc)
 	CreateFeedback(c *gin.Context)
 	DeleteFeedback(c *gin.Context)
 	GetAllFeedback(c *gin.Context)

@@ -1,13 +1,12 @@
 package feedback
 
-import (
-	"product-feedback/middleware"
+import "github.com/gin-gonic/gin"
 
-	"github.com/gin-gonic/gin"
-)
-
-func (h *feedbackHandler) AddRoutes(rg *gin.RouterGroup) {
-	feedback := rg.Group("/feedback", middleware.AuthRequired)
+func (h *feedbackHandler) AddRoutes(
+	rg *gin.RouterGroup,
+	authMiddleware gin.HandlerFunc,
+) {
+	feedback := rg.Group("/feedback", authMiddleware)
 	{
 		feedback.GET("/", h.GetAllFeedback)
 		feedback.POST("/", h.CreateFeedback)

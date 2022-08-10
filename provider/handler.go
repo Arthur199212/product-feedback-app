@@ -85,7 +85,7 @@ func (h *handler) InitRoutes() *gin.Engine {
 
 	h.Auth.AddRoutes(api)
 	h.Comment.AddRoutes(api)
-	h.Feedback.AddRoutes(api)
+	h.Feedback.AddRoutes(api, middleware.AuthRequired)
 	h.User.AddRoutes(api)
 	h.Vote.AddRoutes(api)
 	h.Notifier.AddRoutes(api)

@@ -39,17 +39,23 @@ func Test_CreateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set(userIdCtx, userId)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"title","body":"lorem lorem lorem","category":"ui","status":"idea"}`
 		c.Request, _ = http.NewRequest(
 			http.MethodPost,
-			"/api/feedback",
+			"/api/feedback/",
 			bytes.NewBuffer([]byte(input)),
 		)
-		c.Set(userIdCtx, userId)
 
-		handlerMock.CreateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusOK {
 			t.Fatalf("expected status code %d, but got %d", http.StatusOK, w.Code)
@@ -70,16 +76,21 @@ func Test_CreateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"title","body":"lorem lorem lorem","category":"ui","status":"idea"}`
 		c.Request, _ = http.NewRequest(
 			http.MethodPost,
-			"/api/feedback",
+			"/api/feedback/",
 			bytes.NewBuffer([]byte(input)),
 		)
 
-		handlerMock.CreateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusUnauthorized {
 			t.Fatalf("expected status code %d, but got %d", http.StatusUnauthorized, w.Code)
@@ -100,17 +111,23 @@ func Test_CreateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
-		c.Set(userIdCtx, 1)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set(userIdCtx, 1)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"title",,"body":"lorem lorem lorem","category":"ui"}`
 		c.Request, _ = http.NewRequest(
 			http.MethodPost,
-			"/api/feedback",
+			"/api/feedback/",
 			bytes.NewBuffer([]byte(input)),
 		)
 
-		handlerMock.CreateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
@@ -131,17 +148,23 @@ func Test_CreateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
-		c.Set(userIdCtx, 1)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set(userIdCtx, 1)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"no","body":"lorem lorem lorem","category":"ui"}`
 		c.Request, _ = http.NewRequest(
 			http.MethodPost,
-			"/api/feedback",
+			"/api/feedback/",
 			bytes.NewBuffer([]byte(input)),
 		)
 
-		handlerMock.CreateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
@@ -167,17 +190,22 @@ func Test_DeleteFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set(userIdCtx, userId)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		c.Request, _ = http.NewRequest(
 			http.MethodDelete,
 			"/api/feedback/1",
 			nil,
 		)
-		c.Set(userIdCtx, userId)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 
-		handlerMock.DeleteFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusOK {
 			t.Fatalf("expected status code %d, but got %d", http.StatusOK, w.Code)
@@ -198,16 +226,20 @@ func Test_DeleteFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		c.Request, _ = http.NewRequest(
 			http.MethodDelete,
 			"/api/feedback/1",
 			nil,
 		)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 
-		handlerMock.DeleteFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusUnauthorized {
 			t.Fatalf("expected status code %d, but got %d", http.StatusUnauthorized, w.Code)
@@ -230,17 +262,22 @@ func Test_DeleteFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", userId)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		c.Request, _ = http.NewRequest(
 			http.MethodDelete,
 			"/api/feedback/test",
 			nil,
 		)
-		c.Set(userIdCtx, userId)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "test"})
 
-		handlerMock.DeleteFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
@@ -277,15 +314,22 @@ func Test_GetAllFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", 1)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		c.Request, _ = http.NewRequest(
 			http.MethodGet,
-			"/api/feedback",
+			"/api/feedback/",
 			nil,
 		)
 
-		handlerMock.GetAllFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusOK {
 			t.Fatalf("expected status code %d, but got %d", http.StatusOK, w.Code)
@@ -307,15 +351,22 @@ func Test_GetAllFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", 1)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		c.Request, _ = http.NewRequest(
 			http.MethodGet,
-			"/api/feedback",
+			"/api/feedback/",
 			nil,
 		)
 
-		handlerMock.GetAllFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusInternalServerError {
 			t.Fatalf("expected status code %d, but got %d", http.StatusInternalServerError, w.Code)
@@ -350,16 +401,22 @@ func Test_GetFeedbackById(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", 1)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		c.Request, _ = http.NewRequest(
 			http.MethodGet,
 			"/api/feedback/1",
 			nil,
 		)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 
-		handlerMock.GetFeedbackById(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusOK {
 			t.Fatalf("expected status code %d, but got %d", http.StatusOK, w.Code)
@@ -380,16 +437,22 @@ func Test_GetFeedbackById(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", 1)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		c.Request, _ = http.NewRequest(
 			http.MethodGet,
 			"/api/feedback/test",
 			nil,
 		)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "test"})
 
-		handlerMock.GetFeedbackById(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
@@ -421,7 +484,14 @@ func Test_UpdateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", userId)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"updated title","status":"defined"}`
 		c.Request, _ = http.NewRequest(
@@ -429,10 +499,8 @@ func Test_UpdateFeedback(t *testing.T) {
 			"/api/feedback/1",
 			bytes.NewBuffer([]byte(input)),
 		)
-		c.Set(userIdCtx, userId)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 
-		handlerMock.UpdateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusOK {
 			t.Fatalf("expected status code %d, but got %d", http.StatusOK, w.Code)
@@ -453,7 +521,12 @@ func Test_UpdateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"updated title","status":"defined"}`
 		c.Request, _ = http.NewRequest(
@@ -461,9 +534,8 @@ func Test_UpdateFeedback(t *testing.T) {
 			"/api/feedback/1",
 			bytes.NewBuffer([]byte(input)),
 		)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 
-		handlerMock.UpdateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusUnauthorized {
 			t.Fatalf("expected status code %d, but got %d", http.StatusUnauthorized, w.Code)
@@ -486,7 +558,14 @@ func Test_UpdateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", userId)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"updated title","status":"defined"}`
 		c.Request, _ = http.NewRequest(
@@ -494,10 +573,8 @@ func Test_UpdateFeedback(t *testing.T) {
 			"/api/feedback/test",
 			bytes.NewBuffer([]byte(input)),
 		)
-		c.Set(userIdCtx, userId)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "test"})
 
-		handlerMock.UpdateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
@@ -520,7 +597,14 @@ func Test_UpdateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", userId)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{not valid "title":"updated title","status":"defined"}`
 		c.Request, _ = http.NewRequest(
@@ -528,10 +612,8 @@ func Test_UpdateFeedback(t *testing.T) {
 			"/api/feedback/1",
 			bytes.NewBuffer([]byte(input)),
 		)
-		c.Set(userIdCtx, userId)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 
-		handlerMock.UpdateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
@@ -554,7 +636,14 @@ func Test_UpdateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", userId)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"no"}`
 		c.Request, _ = http.NewRequest(
@@ -562,10 +651,8 @@ func Test_UpdateFeedback(t *testing.T) {
 			"/api/feedback/1",
 			bytes.NewBuffer([]byte(input)),
 		)
-		c.Set(userIdCtx, userId)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 
-		handlerMock.UpdateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
@@ -595,7 +682,14 @@ func Test_UpdateFeedback(t *testing.T) {
 		handlerMock := feedback.NewFeedbackHandler(loggerMock, v, serviceMock)
 
 		w := httptest.NewRecorder()
-		c, _ := gin.CreateTestContext(w)
+		c, router := gin.CreateTestContext(w)
+
+		authMiddlewareMock := func(c *gin.Context) {
+			c.Set("userId", userId)
+		}
+
+		api := router.Group("api")
+		handlerMock.AddRoutes(api, authMiddlewareMock)
 
 		input := `{"title":"updated title","status":"defined"}`
 		c.Request, _ = http.NewRequest(
@@ -603,10 +697,8 @@ func Test_UpdateFeedback(t *testing.T) {
 			"/api/feedback/1",
 			bytes.NewBuffer([]byte(input)),
 		)
-		c.Set(userIdCtx, userId)
-		c.Params = append(c.Params, gin.Param{Key: "id", Value: "1"})
 
-		handlerMock.UpdateFeedback(c)
+		router.ServeHTTP(c.Writer, c.Request)
 
 		if w.Code != http.StatusInternalServerError {
 			t.Fatalf("expected status code %d, but got %d", http.StatusInternalServerError, w.Code)
