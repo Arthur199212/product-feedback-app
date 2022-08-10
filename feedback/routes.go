@@ -12,7 +12,7 @@ func (h *feedbackHandler) AddRoutes(rg *gin.RouterGroup) {
 		feedback.GET("/", h.GetAllFeedback)
 		feedback.POST("/", h.CreateFeedback)
 		feedback.GET("/:id", h.GetFeedbackById)
-		feedback.PUT("/:id", h.updateFeedback)
+		feedback.PUT("/:id", h.UpdateFeedback)
 		feedback.DELETE("/:id", h.DeleteFeedback)
 	}
 }

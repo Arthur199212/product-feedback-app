@@ -17,6 +17,7 @@ type FeedbackHandler interface {
 	DeleteFeedback(c *gin.Context)
 	GetAllFeedback(c *gin.Context)
 	GetFeedbackById(c *gin.Context)
+	UpdateFeedback(c *gin.Context)
 }
 
 type feedbackHandler struct {
@@ -267,7 +268,7 @@ type UpdateFeedbackInput struct {
 //	400: errorResponse
 //	404: errorResponse
 
-func (h *feedbackHandler) updateFeedback(c *gin.Context) {
+func (h *feedbackHandler) UpdateFeedback(c *gin.Context) {
 	userId, err := middleware.GetUserIdFromGinCtx(c)
 	if err != nil {
 		h.l.Error(err)
