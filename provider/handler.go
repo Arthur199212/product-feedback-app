@@ -62,7 +62,7 @@ func NewHandler(
 		Feedback: feedback.NewFeedbackHandler(l, v, s.Feedback),
 		User:     user.NewUserHandler(l, v, s.User),
 		Vote:     vote.NewVoteHandler(l, v, s.Vote),
-		Notifier: notifier.NewNotifierHandler(l, &s.Notifier),
+		Notifier: notifier.NewNotifierHandler(l, s.Notifier),
 	}
 }
 

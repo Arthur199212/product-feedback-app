@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+//go:generate mockgen -source=repository.go -destination=mocks/repository.go
+
 type FeedbackRepository interface {
 	Create(userId int, f CreateFeedbackInput) (int, error)
 	Delete(userId, feedbackId int) error

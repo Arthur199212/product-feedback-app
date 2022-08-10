@@ -18,7 +18,7 @@ import (
 
 const userIdCtx = "userId"
 
-func Test_CreateFeedback(t *testing.T) {
+func TestHandler_CreateFeedback(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
@@ -176,7 +176,7 @@ func Test_CreateFeedback(t *testing.T) {
 	})
 }
 
-func Test_DeleteFeedback(t *testing.T) {
+func TestHandler_DeleteFeedback(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
@@ -289,7 +289,7 @@ func Test_DeleteFeedback(t *testing.T) {
 	})
 }
 
-func Test_GetAllFeedback(t *testing.T) {
+func TestHandler_GetAllFeedback(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
@@ -378,7 +378,7 @@ func Test_GetAllFeedback(t *testing.T) {
 	})
 }
 
-func Test_GetFeedbackById(t *testing.T) {
+func TestHandler_GetFeedbackById(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()
@@ -464,7 +464,7 @@ func Test_GetFeedbackById(t *testing.T) {
 	})
 }
 
-func Test_UpdateFeedback(t *testing.T) {
+func TestHandler_UpdateFeedback(t *testing.T) {
 	t.Run("OK", func(t *testing.T) {
 		ctrl := gomock.NewController(t)
 		defer ctrl.Finish()

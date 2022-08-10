@@ -13,12 +13,12 @@ type CommentService interface {
 
 type commentService struct {
 	repo     CommentRepository
-	notifier *notifier.NotifierService
+	notifier notifier.NotifierService
 }
 
 func NewCommentService(
 	repo CommentRepository,
-	notifier *notifier.NotifierService,
+	notifier notifier.NotifierService,
 ) CommentService {
 	return &commentService{
 		repo:     repo,

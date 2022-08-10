@@ -7,9 +7,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// NotifierService maintains the set of active clients
+//go:generate mockgen -source=service.go -destination=mocks/service.go
+
+type NotifierService interface {
+	BroadcastMessage(et EventType, sub SubjectType, id int)
+	Register(client *ws.Client)
+}
+
+// notifierService maintains the set of active clients
 // and broadcasts messages to the clients
-type NotifierService struct {
+type notifierService struct {
 	l *logrus.Logger
 	// Registered clients
 	clients map[*ws.Client]bool
@@ -21,8 +28,8 @@ type NotifierService struct {
 	unregister chan *ws.Client
 }
 
-func NewNotifierSerivice() *NotifierService {
-	hub := &NotifierService{
+func NewNotifierSerivice() NotifierService {
+	hub := &notifierService{
 		broadcast:  make(chan []byte),
 		register:   make(chan *ws.Client),
 		unregister: make(chan *ws.Client),
@@ -32,31 +39,31 @@ func NewNotifierSerivice() *NotifierService {
 	return hub
 }
 
-type eventType string
-type subjectType string
+type EventType string
+type SubjectType string
 
 const (
-	CreateEvent eventType = "create"
-	UpdateEvent eventType = "update"
-	DeleteEvent eventType = "delete"
+	CreateEvent EventType = "create"
+	UpdateEvent EventType = "update"
+	DeleteEvent EventType = "delete"
 
-	SubjectFeedback subjectType = "feedback"
-	SubjectComment  subjectType = "comment"
-	SubjectVote     subjectType = "vote"
+	SubjectFeedback SubjectType = "feedback"
+	SubjectComment  SubjectType = "comment"
+	SubjectVote     SubjectType = "vote"
 )
 
 type Message struct {
 	// enum: create, update, delete
-	EventType eventType `json:"eventType"`
+	EventType EventType `json:"eventType"`
 	// enum: feedback, comment, vote
-	Subject subjectType `json:"subject"`
+	Subject SubjectType `json:"subject"`
 	// id of the subject
 	Id int `json:"id"`
 }
 
-func (s *NotifierService) BroadcastMessage(
-	et eventType,
-	sub subjectType,
+func (s *notifierService) BroadcastMessage(
+	et EventType,
+	sub SubjectType,
 	id int,
 ) {
 	msg := Message{
@@ -72,7 +79,11 @@ func (s *NotifierService) BroadcastMessage(
 	s.broadcast <- msgByte
 }
 
-func (s *NotifierService) run() {
+func (s *notifierService) Register(client *ws.Client) {
+	s.register <- client
+}
+
+func (s *notifierService) run() {
 	for {
 		select {
 		case client := <-s.register:

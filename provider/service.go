@@ -19,15 +19,15 @@ type Service struct {
 }
 
 func NewService(r *Repository) *Service {
-	notifierService := *notifier.NewNotifierSerivice()
+	notifierService := notifier.NewNotifierSerivice()
 	userService := user.NewUserService(r.User)
 
 	return &Service{
 		Auth:     auth.NewAuthService(userService),
-		Comment:  comment.NewCommentService(r.Comment, &notifierService),
-		Feedback: feedback.NewFeedbackService(r.Feedback, &notifierService),
+		Comment:  comment.NewCommentService(r.Comment, notifierService),
+		Feedback: feedback.NewFeedbackService(r.Feedback, notifierService),
 		User:     userService,
-		Vote:     vote.NewVoteService(r.Vote, &notifierService),
+		Vote:     vote.NewVoteService(r.Vote, notifierService),
 		Notifier: notifierService,
 	}
 }

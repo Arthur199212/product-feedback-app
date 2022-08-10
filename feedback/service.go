@@ -16,14 +16,14 @@ type FeedbackService interface {
 
 type feedbackService struct {
 	repo     FeedbackRepository
-	notifier *notifier.NotifierService
+	notifier notifier.NotifierService
 }
 
 func NewFeedbackService(
 	repo FeedbackRepository,
-	hub *notifier.NotifierService,
+	notifier notifier.NotifierService,
 ) FeedbackService {
-	return &feedbackService{repo: repo, notifier: hub}
+	return &feedbackService{repo: repo, notifier: notifier}
 }
 
 func (s *feedbackService) Create(userId int, f CreateFeedbackInput) (int, error) {
@@ -34,7 +34,7 @@ func (s *feedbackService) Create(userId int, f CreateFeedbackInput) (int, error)
 
 	// notify about feedback create
 	go s.notifier.BroadcastMessage(
-		notifier.DeleteEvent,
+		notifier.CreateEvent,
 		notifier.SubjectFeedback,
 		id,
 	)

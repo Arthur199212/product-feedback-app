@@ -13,12 +13,12 @@ type NotifierHandler interface {
 
 type notifierHandler struct {
 	l       *logrus.Logger
-	service *NotifierService
+	service NotifierService
 }
 
 func NewNotifierHandler(
 	l *logrus.Logger,
-	service *NotifierService,
+	service NotifierService,
 ) NotifierHandler {
 	return &notifierHandler{
 		l:       l,
@@ -37,7 +37,7 @@ func (h *notifierHandler) serveWS(c *gin.Context) {
 		return
 	}
 
-	h.service.register <- client
+	h.service.Register(client)
 
 	go client.WritePump()
 }

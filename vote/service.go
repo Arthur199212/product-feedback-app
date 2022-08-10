@@ -14,12 +14,12 @@ type VoteService interface {
 
 type voteService struct {
 	repo     VoteRepository
-	notifier *notifier.NotifierService
+	notifier notifier.NotifierService
 }
 
 func NewVoteService(
 	repo VoteRepository,
-	notifier *notifier.NotifierService,
+	notifier notifier.NotifierService,
 ) VoteService {
 	return &voteService{
 		repo:     repo,
