@@ -1,6 +1,7 @@
 # Product Feedback App Backend
 
 [![CI](https://github.com/Arthur199212/product-feedback-app/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Arthur199212/product-feedback-app/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/Arthur199212/product-feedback-app/branch/master/graph/badge.svg?token=KPT5HEGLCH)](https://codecov.io/gh/Arthur199212/product-feedback-app)
 
 ## Links
 
