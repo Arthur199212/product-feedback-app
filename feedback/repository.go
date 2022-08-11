@@ -35,7 +35,7 @@ const (
 	defaultFeedbackStatus = "idea"
 )
 
-var errNoInputToUpdate = errors.New("no input to update")
+var ErrNoInputToUpdate = errors.New("no input to update")
 
 func (r *feedbackRepository) Create(userId int, f CreateFeedbackInput) (int, error) {
 	query := fmt.Sprintf(`
@@ -177,8 +177,8 @@ func (r *feedbackRepository) Update(
 	feedbackId int,
 	f UpdateFeedbackInput,
 ) error {
-	setValues := make([]string, 0, 4)
-	args := make([]interface{}, 0, 4)
+	setValues := make([]string, 0, 5)
+	args := make([]interface{}, 0, 5)
 	argsId := 1
 
 	if f.Body != nil {
@@ -206,8 +206,13 @@ func (r *feedbackRepository) Update(
 	}
 
 	if len(setValues) == 0 {
-		return errNoInputToUpdate
+		return ErrNoInputToUpdate
 	}
+
+	currentTime := time.Now().UTC()
+	setValues = append(setValues, fmt.Sprintf("updated_at=$%d", argsId))
+	args = append(args, currentTime)
+	argsId++
 
 	setQuery := strings.Join(setValues, ", ")
 

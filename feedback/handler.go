@@ -308,7 +308,7 @@ func (h *feedbackHandler) UpdateFeedback(c *gin.Context) {
 	switch err {
 	case nil:
 		break
-	case errNoInputToUpdate:
+	case ErrNoInputToUpdate:
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
 			"message": "No input to update",
