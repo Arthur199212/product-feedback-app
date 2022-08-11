@@ -58,3 +58,15 @@ func (mr *MockNotifierServiceMockRecorder) Register(client interface{}) *gomock.
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Register", reflect.TypeOf((*MockNotifierService)(nil).Register), client)
 }
+
+// Unregister mocks base method.
+func (m *MockNotifierService) Unregister(client *ws.Client) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "Unregister", client)
+}
+
+// Unregister indicates an expected call of Unregister.
+func (mr *MockNotifierServiceMockRecorder) Unregister(client interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Unregister", reflect.TypeOf((*MockNotifierService)(nil).Unregister), client)
+}

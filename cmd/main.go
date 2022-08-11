@@ -44,7 +44,7 @@ func main() {
 	v := validation.NewValidation()
 
 	repos := provider.NewRepository(db)
-	services := provider.NewService(repos)
+	services := provider.NewService(logger, repos)
 	handlers := provider.NewHandler(logger, v, services)
 
 	svr := server.NewServer(*port, handlers)

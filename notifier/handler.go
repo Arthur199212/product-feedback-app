@@ -31,7 +31,7 @@ func (h *notifierHandler) AddRoutes(r *gin.RouterGroup) {
 }
 
 func (h *notifierHandler) serveWS(c *gin.Context) {
-	client, err := ws.NewClient(h.l, c.Writer, c.Request)
+	client, err := ws.NewClient(h.l, c.Writer, c.Request, h.service.Unregister)
 	if err != nil {
 		h.l.Error(err)
 		return
@@ -40,4 +40,5 @@ func (h *notifierHandler) serveWS(c *gin.Context) {
 	h.service.Register(client)
 
 	go client.WritePump()
+	go client.ReadPump()
 }

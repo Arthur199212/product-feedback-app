@@ -7,6 +7,8 @@ import (
 	"product-feedback/notifier"
 	"product-feedback/user"
 	"product-feedback/vote"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Service struct {
@@ -18,8 +20,8 @@ type Service struct {
 	Notifier notifier.NotifierService
 }
 
-func NewService(r *Repository) *Service {
-	notifierService := notifier.NewNotifierSerivice()
+func NewService(l *logrus.Logger, r *Repository) *Service {
+	notifierService := notifier.NewNotifierSerivice(l)
 	userService := user.NewUserService(r.User)
 
 	return &Service{

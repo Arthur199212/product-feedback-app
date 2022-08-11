@@ -12,6 +12,7 @@ import (
 type NotifierService interface {
 	BroadcastMessage(et EventType, sub SubjectType, id int)
 	Register(client *ws.Client)
+	Unregister(client *ws.Client)
 }
 
 // notifierService maintains the set of active clients
@@ -28,15 +29,16 @@ type notifierService struct {
 	unregister chan *ws.Client
 }
 
-func NewNotifierSerivice() NotifierService {
-	hub := &notifierService{
+func NewNotifierSerivice(l *logrus.Logger) NotifierService {
+	serivice := &notifierService{
+		l:          l,
 		broadcast:  make(chan []byte),
 		register:   make(chan *ws.Client),
 		unregister: make(chan *ws.Client),
 		clients:    make(map[*ws.Client]bool),
 	}
-	go hub.run()
-	return hub
+	go serivice.run()
+	return serivice
 }
 
 type EventType string
@@ -81,6 +83,10 @@ func (s *notifierService) BroadcastMessage(
 
 func (s *notifierService) Register(client *ws.Client) {
 	s.register <- client
+}
+
+func (s *notifierService) Unregister(client *ws.Client) {
+	s.unregister <- client
 }
 
 func (s *notifierService) run() {
