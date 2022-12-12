@@ -44,6 +44,34 @@ definitions:
         x-go-name: UserId
     type: object
     x-go-package: product-feedback/comment
+  CreateFeedbackInput:
+    properties:
+      body:
+        description: Body of the feedback
+        maxLength: 1000
+        minLength: 10
+        type: string
+        x-go-name: Body
+      category:
+        description: Category of the feedback
+        type: string
+        x-go-name: Category
+      status:
+        description: Status of the feedback
+        type: string
+        x-go-name: Status
+      title:
+        description: Title of the feedback
+        maxLength: 50
+        minLength: 5
+        type: string
+        x-go-name: Title
+    required:
+    - title
+    - body
+    - category
+    type: object
+    x-go-package: product-feedback/feedback
   Feedback:
     properties:
       body:
@@ -92,6 +120,30 @@ definitions:
         minimum: 1
         type: integer
         x-go-name: UserId
+    type: object
+    x-go-package: product-feedback/feedback
+  UpdateFeedbackInput:
+    properties:
+      body:
+        description: Body of the feedback
+        maxLength: 1000
+        minLength: 10
+        type: string
+        x-go-name: Body
+      category:
+        description: Category of the feedback
+        type: string
+        x-go-name: Category
+      status:
+        description: Status of the feedback
+        type: string
+        x-go-name: Status
+      title:
+        description: Title of the feedback
+        maxLength: 50
+        minLength: 5
+        type: string
+        x-go-name: Title
     type: object
     x-go-package: product-feedback/feedback
   User:
@@ -188,34 +240,6 @@ definitions:
     - feedbackId
     type: object
     x-go-package: product-feedback/comment
-  createFeedbackInput:
-    properties:
-      body:
-        description: Body of the feedback
-        maxLength: 1000
-        minLength: 10
-        type: string
-        x-go-name: Body
-      category:
-        description: Category of the feedback
-        type: string
-        x-go-name: Category
-      status:
-        description: Status of the feedback
-        type: string
-        x-go-name: Status
-      title:
-        description: Title of the feedback
-        maxLength: 50
-        minLength: 5
-        type: string
-        x-go-name: Title
-    required:
-    - title
-    - body
-    - category
-    type: object
-    x-go-package: product-feedback/feedback
   createVoteInput:
     properties:
       feedbackId:
@@ -240,30 +264,6 @@ definitions:
     - refreshToken
     type: object
     x-go-package: product-feedback/auth
-  updateFeedbackInput:
-    properties:
-      body:
-        description: Body of the feedback
-        maxLength: 1000
-        minLength: 10
-        type: string
-        x-go-name: Body
-      category:
-        description: Category of the feedback
-        type: string
-        x-go-name: Category
-      status:
-        description: Status of the feedback
-        type: string
-        x-go-name: Status
-      title:
-        description: Title of the feedback
-        maxLength: 50
-        minLength: 5
-        type: string
-        x-go-name: Title
-    type: object
-    x-go-package: product-feedback/feedback
 info:
   description: Documentation Product Feedback API
   title: Product Feedback API
@@ -331,6 +331,9 @@ paths:
       - description: |-
           Feedback id can be used to filter out
           comments by feedback they relate to.
+          It's possible to pass multimple feedback ids
+          (ids should be comma delimited).
+        example: /api/comments?feedbackId=1,2,3,4,5
         in: query
         name: feedbackId
         type: string
@@ -399,7 +402,7 @@ paths:
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/createFeedbackInput'
+          $ref: '#/definitions/CreateFeedbackInput'
       responses:
         "200":
           $ref: '#/responses/createFeedbackResponse'
@@ -457,7 +460,7 @@ paths:
         name: Body
         required: true
         schema:
-          $ref: '#/definitions/updateFeedbackInput'
+          $ref: '#/definitions/UpdateFeedbackInput'
       - description: The id of the feedback for which the operation relates
         format: int64
         in: path

@@ -28,9 +28,10 @@ jobs:
       - name: Build
         run: make build
 
-      - name: Deploy
-        uses: akhileshns/heroku-deploy@v3.12.12
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: go-product-feedback
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
+      # Heroku is not free anylonger
+      # - name: Deploy
+      #   uses: akhileshns/heroku-deploy@v3.12.12
+      #   with:
+      #     heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+      #     heroku_app_name: go-product-feedback
+      #     heroku_email: ${{secrets.HEROKU_EMAIL}}

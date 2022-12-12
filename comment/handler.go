@@ -2,10 +2,12 @@ package comment
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"product-feedback/middleware"
 	"product-feedback/validation"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -48,17 +50,15 @@ func (h *commentHandler) getAllComments(c *gin.Context) {
 	// sorted: date of creation, date of update
 	// pagination: limit/size=<uint>, page=<uint>
 
-	var feedbackIdInt *int
-	if feedbackId := c.Query("feedbackId"); feedbackId != "" {
-		parsedFeedbackId, err := strconv.Atoi(feedbackId)
-		if err != nil {
-			h.l.Warn(err)
-		} else {
-			feedbackIdInt = &parsedFeedbackId
-		}
+	feedbackIds, err := parseFeedbackIdsFromQuery(c.Query("feedbackId"))
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": err.Error(),
+		})
 	}
 
-	comments, err := h.service.GetAll(feedbackIdInt)
+	comments, err := h.service.GetAll(feedbackIds)
 	if err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{
@@ -68,6 +68,23 @@ func (h *commentHandler) getAllComments(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, comments)
+}
+
+func parseFeedbackIdsFromQuery(str string) ([]int, error) {
+	if str == "" {
+		return []int{}, nil
+	}
+
+	ids := strings.Split(str, ",")
+	parsedIds := make([]int, len(ids))
+	for i := range ids {
+		parsedId, err := strconv.Atoi(ids[i])
+		if err != nil {
+			return parsedIds, fmt.Errorf("invalid feedbackId param")
+		}
+		parsedIds[i] = parsedId
+	}
+	return parsedIds, nil
 }
 
 type createCommentInput struct {

@@ -52,8 +52,11 @@ type errorResponse struct {
 type feedbackIdQueryParam struct {
 	// Feedback id can be used to filter out
 	// comments by feedback they relate to.
+	// It's possible to pass multimple feedback ids
+	// (ids should be comma delimited).
 	// in: query
 	// required: false
+	// example: /api/comments?feedbackId=1,2,3,4,5
 	FeedbackId string `json:"feedbackId"`
 }
 

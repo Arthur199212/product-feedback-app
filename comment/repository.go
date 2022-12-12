@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 type CommentRepository interface {
 	Create(userId int, f createCommentInput) (int, error)
-	GetAll(feedbackId *int) ([]Comment, error)
+	GetAll(feedbackIds []int) ([]Comment, error)
 	GetById(commentId int) (Comment, error)
 }
 
@@ -46,17 +48,17 @@ func (r *commentRepository) Create(userId int, f createCommentInput) (int, error
 	return id, err
 }
 
-func (r *commentRepository) GetAll(feedbackId *int) ([]Comment, error) {
+func (r *commentRepository) GetAll(feedbackIds []int) ([]Comment, error) {
 	whereClauseValues := make([]string, 0, 1)
 	args := make([]interface{}, 0, 1)
 	argId := 1
 
-	if feedbackId != nil {
+	if len(feedbackIds) > 0 {
 		whereClauseValues = append(
 			whereClauseValues,
-			fmt.Sprintf("feedback_id=$%d", argId),
+			fmt.Sprintf("feedback_id = ANY($%d::int[])", argId),
 		)
-		args = append(args, feedbackId)
+		args = append(args, pq.Array(feedbackIds))
 		argId++
 	}
 

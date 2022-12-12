@@ -7,7 +7,7 @@ import (
 
 type CommentService interface {
 	Create(userId int, f createCommentInput) (int, error)
-	GetAll(feedbackId *int) ([]Comment, error)
+	GetAll(feedbackIds []int) ([]Comment, error)
 	GetById(commentId int) (Comment, error)
 }
 
@@ -52,8 +52,8 @@ func (s *commentService) Create(userId int, f createCommentInput) (int, error) {
 	return id, nil
 }
 
-func (s *commentService) GetAll(feedbackId *int) ([]Comment, error) {
-	return s.repo.GetAll(feedbackId)
+func (s *commentService) GetAll(feedbackIds []int) ([]Comment, error) {
+	return s.repo.GetAll(feedbackIds)
 }
 
 func (s *commentService) GetById(commentId int) (Comment, error) {
