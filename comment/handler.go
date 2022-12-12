@@ -2,12 +2,11 @@ package comment
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"product-feedback/middleware"
+	"product-feedback/utils"
 	"product-feedback/validation"
 	"strconv"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
@@ -50,7 +49,7 @@ func (h *commentHandler) getAllComments(c *gin.Context) {
 	// sorted: date of creation, date of update
 	// pagination: limit/size=<uint>, page=<uint>
 
-	feedbackIds, err := parseFeedbackIdsFromQuery(c.Query("feedbackId"))
+	feedbackIds, err := utils.ParseFeedbackIdsFromQuery(c.Query("feedbackId"))
 	if err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
@@ -68,23 +67,6 @@ func (h *commentHandler) getAllComments(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, comments)
-}
-
-func parseFeedbackIdsFromQuery(str string) ([]int, error) {
-	if str == "" {
-		return []int{}, nil
-	}
-
-	ids := strings.Split(str, ",")
-	parsedIds := make([]int, len(ids))
-	for i := range ids {
-		parsedId, err := strconv.Atoi(ids[i])
-		if err != nil {
-			return parsedIds, fmt.Errorf("invalid feedbackId param")
-		}
-		parsedIds[i] = parsedId
-	}
-	return parsedIds, nil
 }
 
 type createCommentInput struct {

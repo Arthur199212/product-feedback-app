@@ -60,7 +60,10 @@ type createVoteInputParamsWrapper struct {
 type feedbackIdQueryParam struct {
 	// Feedback id can be used to filter out
 	// votes by feedback they relate to.
+	// It's possible to pass multimple feedback ids
+	// (ids should be comma delimited).
 	// in: query
 	// required: false
+	// example: /api/votes/?feedbackId=1,2
 	FeedbackId string `json:"feedbackId"`
 }

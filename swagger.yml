@@ -519,6 +519,9 @@ paths:
       - description: |-
           Feedback id can be used to filter out
           votes by feedback they relate to.
+          It's possible to pass multimple feedback ids
+          (ids should be comma delimited).
+        example: /api/votes/?feedbackId=1,2
         in: query
         name: feedbackId
         type: string

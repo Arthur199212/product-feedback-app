@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"product-feedback/middleware"
+	"product-feedback/utils"
 	"product-feedback/validation"
 	"strconv"
 
@@ -43,22 +44,15 @@ func NewVoteHandler(
 //	200: getAllVotesResponse
 
 func (h *voteHandler) getAllVotes(c *gin.Context) {
-	var feedbackIdInt *int
-	if feedbackId := c.Query("feedbackId"); feedbackId != "" {
-		parsedFeedbackId, err := strconv.Atoi(feedbackId)
-		if err != nil {
-			h.l.Warn(err)
-		} else {
-			feedbackIdInt = &parsedFeedbackId
-		}
+	feedbackIds, err := utils.ParseFeedbackIdsFromQuery(c.Query("feedbackId"))
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
+			"message": err.Error(),
+		})
 	}
 
-	if err := h.v.ValidateVar(feedbackIdInt, "omitempty,gt=0"); err != nil {
-		h.l.Warn(err)
-		feedbackIdInt = nil
-	}
-
-	votes, err := h.service.GetAll(feedbackIdInt)
+	votes, err := h.service.GetAll(feedbackIds)
 	if err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusInternalServerError, map[string]interface{}{

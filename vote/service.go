@@ -9,7 +9,7 @@ import (
 type VoteService interface {
 	Create(userId int, v createVoteInput) (int, error)
 	Delete(userId, voteId int) error
-	GetAll(feedbackId *int) ([]Vote, error)
+	GetAll(feedbackIds []int) ([]Vote, error)
 }
 
 type voteService struct {
@@ -68,6 +68,6 @@ func (s *voteService) Delete(userId, voteId int) error {
 	return nil
 }
 
-func (s *voteService) GetAll(feedbackId *int) ([]Vote, error) {
-	return s.repo.GetAll(feedbackId)
+func (s *voteService) GetAll(feedbackIds []int) ([]Vote, error) {
+	return s.repo.GetAll(feedbackIds)
 }

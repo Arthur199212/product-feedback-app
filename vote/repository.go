@@ -5,12 +5,14 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/lib/pq"
 )
 
 type VoteRepository interface {
 	Create(userId int, v createVoteInput) (int, error)
 	Delete(userId, voteId int) error
-	GetAll(feedbackId *int) ([]Vote, error)
+	GetAll(feedbackIds []int) ([]Vote, error)
 	GetByFeedbackId(userId, feedbackId int) (Vote, error)
 }
 
@@ -64,17 +66,17 @@ func (r *voteRepository) Delete(userId, voteId int) error {
 	return err
 }
 
-func (r *voteRepository) GetAll(feedbackId *int) ([]Vote, error) {
+func (r *voteRepository) GetAll(feedbackIds []int) ([]Vote, error) {
 	whereClauseValues := make([]string, 0, 1)
 	args := make([]interface{}, 0, 1)
 	argId := 1
 
-	if feedbackId != nil {
+	if len(feedbackIds) > 0 {
 		whereClauseValues = append(
 			whereClauseValues,
-			fmt.Sprintf("feedback_id=$%d", argId),
+			fmt.Sprintf("feedback_id = ANY($%d::int[])", argId),
 		)
-		args = append(args, feedbackId)
+		args = append(args, pq.Array(feedbackIds))
 		argId++
 	}
 
