@@ -3,10 +3,6 @@
 [![CI](https://github.com/Arthur199212/product-feedback-app/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Arthur199212/product-feedback-app/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/Arthur199212/product-feedback-app/branch/master/graph/badge.svg?token=KPT5HEGLCH)](https://codecov.io/gh/Arthur199212/product-feedback-app)
 
-## Links
-
-- [Swagger](https://go-product-feedback.herokuapp.com/docs)
-
 ## Technologies
 
 - [Go](https://go.dev/)
@@ -15,7 +11,6 @@
 - JWT
 - [PostgreSQL](https://www.postgresql.org/)
 - [logrus](https://github.com/sirupsen/logrus)
-- [Heroku](https://www.heroku.com/)
 - [Swagger](https://goswagger.io/)
 - Websocket with [gorilla/websocket](https://github.com/gorilla/websocket)
 - [golang/mock](https://github.com/golang/mock)
