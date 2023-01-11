@@ -85,7 +85,7 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 	q.Set("access_token", accessToken)
 	q.Set("refresh_token", refreshToken)
 	loginCallbackUrlWithTokens := url.URL{
-		Path:     os.Getenv("FRONTEND_APP_LOGIN_CALLBACK_URL"),
+		Path:     os.Getenv("LOGIN_CALLBACK_URL"),
 		RawQuery: q.Encode(),
 	}
 
@@ -100,7 +100,7 @@ func (h *authHandler) loginWithGitHub(c *gin.Context) {
 func (h *authHandler) redirectToGitHubLoginURL(c *gin.Context) {
 	q := url.Values{}
 	q.Set("client_id", os.Getenv("GITHUB_CLIENT_ID"))
-	q.Set("redirect_uri", os.Getenv("APP_URL")+ghRedirectURI)
+	q.Set("redirect_uri", os.Getenv("FRONTEND_URL")+ghRedirectURI)
 	q.Set("scope", ghUserEmailScope)
 	location := url.URL{Path: ghLoginOauthAuthorizeURI, RawQuery: q.Encode()}
 

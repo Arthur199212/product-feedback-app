@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+    entrypoint: [ "/app/wait-for.sh", "db:5432", "--", "/app/start.sh" ]
+    command: [ "/app/main" ]
+    ports:
+      - 8000:8000
+
   db:
     image: postgres
     environment:
@@ -10,10 +23,10 @@ services:
     env_file:
       - .env
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - product-feedback-db:/var/lib/postgresql/data
     ports:
       - '${POSTGRES_PORT}:5432'
 
 volumes:
-  pgdata:
+  product-feedback-db:
     external: true
