@@ -2,21 +2,21 @@
 //
 // Documentation Product Feedback API
 //
-//  Schemes: http
-//  BasePath: /
-//  Version: 1.0.0
+//	Schemes: http
+//	BasePath: /
+//	Version: 1.0.0
 //
-//  Consumes:
-//  - application/json
+//	Consumes:
+//	- application/json
 //
-//  Produces:
-//  - application/json
+//	Produces:
+//	- application/json
 //
-//  SecurityDefinitions:
-//  Bearer:
-//    type: apiKey
-//    in: header
-//    name: Authorization
+//	SecurityDefinitions:
+//	Bearer:
+//	  type: apiKey
+//	  in: header
+//	  name: Authorization
 //
 // swagger:meta
 package provider
