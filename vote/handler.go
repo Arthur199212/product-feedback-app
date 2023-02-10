@@ -44,7 +44,7 @@ func NewVoteHandler(
 //	200: getAllVotesResponse
 
 func (h *voteHandler) getAllVotes(c *gin.Context) {
-	feedbackIds, err := utils.ParseFeedbackIdsFromQuery(c.Query("feedbackId"))
+	feedbackIds, err := utils.ParseIdsFromQuery(c.Query("feedbackId"))
 	if err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{

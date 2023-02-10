@@ -500,6 +500,32 @@ paths:
       - Bearer: []
       tags:
       - users
+  /api/users:
+    get:
+      description: Returns a list of all users in the system
+      operationId: getAllUsers
+      parameters:
+      - description: |-
+          Parameter 'userId' can be used to filter out
+          users by IDs.
+          It's possible to pass multimple IDs
+          (IDs should be comma delimited).
+        example: /api/users?userId=1,2,3,4,5
+        in: query
+        name: userId
+        type: string
+        x-go-name: userId
+      responses:
+        "200":
+          $ref: '#/responses/getAllUsersResponse'
+        "400":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorResponse'
+      security:
+      - Bearer: []
+      tags:
+      - users
   /api/users/me:
     get:
       description: Returs user data
@@ -623,6 +649,12 @@ responses:
     schema:
       items:
         $ref: '#/definitions/Feedback'
+      type: array
+  getAllUsersResponse:
+    description: Returns a list of all users in the system
+    schema:
+      items:
+        $ref: '#/definitions/User'
       type: array
   getAllVotesResponse:
     description: OK response

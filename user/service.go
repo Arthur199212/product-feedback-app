@@ -4,6 +4,7 @@ type UserService interface {
 	Create(user User) (int, error)
 	GetByEmail(email string) (User, error)
 	GetById(id int) (User, error)
+	GetAll(userIds []int) ([]User, error)
 }
 
 type userService struct {
@@ -24,4 +25,8 @@ func (s *userService) GetByEmail(email string) (User, error) {
 
 func (s *userService) GetById(id int) (User, error) {
 	return s.repo.GetById(id)
+}
+
+func (s *userService) GetAll(userIds []int) ([]User, error) {
+	return s.repo.GetAll(userIds)
 }

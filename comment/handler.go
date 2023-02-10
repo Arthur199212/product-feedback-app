@@ -49,7 +49,7 @@ func (h *commentHandler) getAllComments(c *gin.Context) {
 	// sorted: date of creation, date of update
 	// pagination: limit/size=<uint>, page=<uint>
 
-	feedbackIds, err := utils.ParseFeedbackIdsFromQuery(c.Query("feedbackId"))
+	feedbackIds, err := utils.ParseIdsFromQuery(c.Query("feedbackId"))
 	if err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{

@@ -10,6 +10,7 @@ func (h *userHandler) AddRoutes(rg *gin.RouterGroup) {
 	users := rg.Group("/users", middleware.AuthRequired)
 	{
 		users.GET("/me", h.getMe)
+		users.GET("/", h.getAllUsers)
 		users.GET("/:id", h.getUserById)
 	}
 }

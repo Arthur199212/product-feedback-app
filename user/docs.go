@@ -25,3 +25,23 @@ type userIdParam struct {
 	// required: true
 	Id int `json:"id"`
 }
+
+// swagger:parameters getAllUsers
+type userIdQueryParam struct {
+	// Parameter 'userId' can be used to filter out
+	// users by IDs.
+	// It's possible to pass multimple IDs
+	// (IDs should be comma delimited).
+	// in: query
+	// required: false
+	// example: /api/users?userId=1,2,3,4,5
+	UserId string `json:"userId"`
+}
+
+// Returns a list of all users in the system
+// swagger:response getAllUsersResponse
+type getAllUsersResponseWrapper struct {
+	// getAllUsersResponse
+	// in: body
+	Body []User
+}

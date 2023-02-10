@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"net/http"
 	"product-feedback/middleware"
+	"product-feedback/utils"
 	"product-feedback/validation"
 	"strconv"
 
@@ -116,4 +117,37 @@ func (h *userHandler) getUserById(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, user)
+}
+
+// swagger:route GET /api/users users getAllUsers
+// Returs all users in the system
+//
+// security:
+// - Bearer:
+//
+// responses:
+//	200: getAllUsersResponse
+//	400: errorResponse
+//	500: errorResponse
+
+func (h *userHandler) getAllUsers(c *gin.Context) {
+	userIds, err := utils.ParseIdsFromQuery(c.Query("userId"))
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	users, err := h.service.GetAll(userIds)
+	if err != nil {
+		h.l.Error(err)
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, users)
 }
