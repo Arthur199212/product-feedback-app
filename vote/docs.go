@@ -67,3 +67,11 @@ type feedbackIdQueryParam struct {
 	// example: /api/votes/?feedbackId=1,2
 	FeedbackId string `json:"feedbackId"`
 }
+
+// swagger:parameters toggleVote
+type toggleVoteInputParamsWrapper struct {
+	// Data structure to toggle vote
+	// in: body
+	// required: true
+	Body toggleVoteInput
+}

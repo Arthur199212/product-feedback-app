@@ -252,6 +252,18 @@ definitions:
     - feedbackId
     type: object
     x-go-package: product-feedback/vote
+  toggleVoteInput:
+    properties:
+      feedbackId:
+        description: The id of the feedback vote is related to
+        format: int64
+        minimum: 1
+        type: integer
+        x-go-name: FeedbackId
+    required:
+    - feedbackId
+    type: object
+    x-go-package: product-feedback/vote
   refreshAccessTokenInput:
     properties:
       refreshToken:
@@ -572,6 +584,28 @@ paths:
       responses:
         "200":
           $ref: '#/responses/createVoteResponse'
+      security:
+      - Bearer: []
+      tags:
+      - votes
+  /api/votes/toggle:
+    post:
+      description: Toggles a vote
+      operationId: toggleVote
+      parameters:
+      - description: Data structure to toggle vote
+        in: body
+        name: Body
+        required: true
+        schema:
+          $ref: '#/definitions/toggleVoteInput'
+      responses:
+        "200":
+          $ref: '#/responses/okResponse'
+        "400":
+          $ref: '#/responses/errorResponse'
+        "500":
+          $ref: '#/responses/errorResponse'
       security:
       - Bearer: []
       tags:

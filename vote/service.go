@@ -7,9 +7,10 @@ import (
 )
 
 type VoteService interface {
-	Create(userId int, v createVoteInput) (int, error)
+	Create(userId, feedbackId int) (int, error)
 	Delete(userId, voteId int) error
 	GetAll(feedbackIds []int) ([]Vote, error)
+	Toggle(userId int, feedbackId int) error
 }
 
 type voteService struct {
@@ -29,9 +30,8 @@ func NewVoteService(
 
 var ErrVoteAlreadyExists = errors.New("vote already exists")
 
-func (s *voteService) Create(userId int, v createVoteInput) (int, error) {
-	_, err := s.repo.GetByFeedbackId(userId, v.FeedbackId)
-	// if vote doesn't exists -> then create a vote
+func (s *voteService) Create(userId int, feedbackId int) (int, error) {
+	_, err := s.repo.GetByFeedbackId(userId, feedbackId)
 	if err != nil && err != sql.ErrNoRows {
 		return 0, err
 	}
@@ -40,7 +40,8 @@ func (s *voteService) Create(userId int, v createVoteInput) (int, error) {
 		return 0, ErrVoteAlreadyExists
 	}
 
-	id, err := s.repo.Create(userId, v)
+	// if vote doesn't exists -> then create a vote
+	id, err := s.repo.Create(userId, feedbackId)
 	if err != nil {
 		return id, err
 	}
@@ -70,4 +71,18 @@ func (s *voteService) Delete(userId, voteId int) error {
 
 func (s *voteService) GetAll(feedbackIds []int) ([]Vote, error) {
 	return s.repo.GetAll(feedbackIds)
+}
+
+func (s *voteService) Toggle(userId int, feedbackId int) error {
+	vote, err := s.repo.GetByFeedbackId(userId, feedbackId)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
+	if err == nil {
+		return s.Delete(userId, vote.Id)
+	}
+
+	_, err = s.Create(userId, feedbackId)
+	return err
 }

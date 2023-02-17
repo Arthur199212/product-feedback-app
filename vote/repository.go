@@ -10,7 +10,7 @@ import (
 )
 
 type VoteRepository interface {
-	Create(userId int, v createVoteInput) (int, error)
+	Create(userId, feedbackId int) (int, error)
 	Delete(userId, voteId int) error
 	GetAll(feedbackIds []int) ([]Vote, error)
 	GetByFeedbackId(userId, feedbackId int) (Vote, error)
@@ -28,7 +28,7 @@ const (
 	votesTable = "votes"
 )
 
-func (r *voteRepository) Create(userId int, v createVoteInput) (int, error) {
+func (r *voteRepository) Create(userId, feedbackId int) (int, error) {
 	query := fmt.Sprintf(`
 		INSERT INTO %s (feedback_id, user_id, created_at, updated_at)
 		VALUES ($1, $2, $3, $4) RETURNING id
@@ -38,7 +38,7 @@ func (r *voteRepository) Create(userId int, v createVoteInput) (int, error) {
 	currentTime := time.Now().UTC()
 	err := r.db.QueryRow(
 		query,
-		v.FeedbackId,
+		feedbackId,
 		userId,
 		currentTime,
 		currentTime,

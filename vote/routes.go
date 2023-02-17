@@ -12,5 +12,6 @@ func (h *voteHandler) AddRoutes(rg *gin.RouterGroup) {
 		votes.GET("/", h.getAllVotes)
 		votes.POST("/", h.createVote)
 		votes.DELETE("/:id", h.deleteVote)
+		votes.POST("/toggle", h.toggleVote)
 	}
 }
