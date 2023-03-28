@@ -18,7 +18,7 @@ type Feedback struct {
 	Body string `json:"body" db:"body"`
 	// Category of the feedback
 	//
-	// Possible categories: 'ui', 'ux', 'enchancement', 'bug', 'feature'
+	// Possible categories: 'ui', 'ux', 'enhancement', 'bug', 'feature'
 	Category string `json:"category" db:"category"`
 	// Status of the feedback
 	//

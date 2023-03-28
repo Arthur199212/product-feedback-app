@@ -84,7 +84,7 @@ definitions:
         description: |-
           Category of the feedback
 
-          Possible categories: 'ui', 'ux', 'enchancement', 'bug', 'feature'
+          Possible categories: 'ui', 'ux', 'enhancement', 'bug', 'feature'
         type: string
         x-go-name: Category
       createdAt:

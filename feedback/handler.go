@@ -2,6 +2,7 @@ package feedback
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"product-feedback/middleware"
 	"product-feedback/validation"
@@ -54,8 +55,8 @@ type CreateFeedbackInput struct {
 	// Category of the feedback
 	//
 	// required: true
-	// Possible categories: 'ui', 'ux', 'enchancement', 'bug', 'feature'
-	Category string `json:"category" validate:"required,oneof=ui ux enchancement bug feature"`
+	// Possible categories: 'ui', 'ux', 'enhancement', 'bug', 'feature'
+	Category string `json:"category" validate:"required,oneof=ui ux enhancement bug feature"`
 	// Status of the feedback
 	//
 	// required: false
@@ -248,8 +249,8 @@ type UpdateFeedbackInput struct {
 	// Category of the feedback
 	//
 	// required: false
-	// Possible categories: 'ui', 'ux', 'enchancement', 'bug', 'feature'
-	Category *string `json:"category" validate:"omitempty,oneof=ui ux enchancement bug feature"`
+	// Possible categories: 'ui', 'ux', 'enhancement', 'bug', 'feature'
+	Category *string `json:"category" validate:"omitempty,oneof=ui ux enhancement bug feature"`
 	// Status of the feedback
 	//
 	// required: false
@@ -299,7 +300,7 @@ func (h *feedbackHandler) UpdateFeedback(c *gin.Context) {
 	if err = h.v.ValidateStruct(input); err != nil {
 		h.l.Error(err)
 		c.AbortWithStatusJSON(http.StatusBadRequest, map[string]interface{}{
-			"message": "Invalid input",
+			"message": fmt.Sprintf("invalid input: %v", err),
 		})
 		return
 	}

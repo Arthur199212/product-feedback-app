@@ -2,8 +2,10 @@ package feedback_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"product-feedback/feedback"
@@ -14,6 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/sirupsen/logrus/hooks/test"
+	"github.com/stretchr/testify/require"
 )
 
 const userIdCtx = "userId"
@@ -657,10 +660,13 @@ func TestHandler_UpdateFeedback(t *testing.T) {
 		if w.Code != http.StatusBadRequest {
 			t.Fatalf("expected status code %d, but got %d", http.StatusBadRequest, w.Code)
 		}
-		expectedResponse := `{"message":"Invalid input"}`
-		if w.Body.String() != expectedResponse {
-			t.Fatalf("expected response: %v, but got: %v", expectedResponse, w.Body.String())
-		}
+		data, err := io.ReadAll(w.Body)
+		require.NoError(t, err)
+
+		var body struct{ Message string }
+		err = json.Unmarshal(data, &body)
+		require.NoError(t, err)
+		require.Contains(t, body.Message, "invalid input")
 	})
 
 	t.Run("service returns an error", func(t *testing.T) {
